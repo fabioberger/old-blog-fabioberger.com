@@ -1,15 +1,25 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
+        <loc>
+            http://fabioberger.github.io/blog/2013/12/16/the-cube-an-experiment-in-building-an-entrepreneurial-community/
+        </loc>
+        <lastmod>2013-12-16T13:33:43+01:00</lastmod>
+    </url>
+    <url>
+        <loc>http://fabioberger.github.io/about/</loc>
+        <lastmod>2013-12-16T13:31:45+01:00</lastmod>
+    </url>
+    <url>
         <loc>http://fabioberger.github.io/blog/archives/</loc>
-        <lastmod>2013-12-16T11:00:29+01:00</lastmod>
+        <lastmod>2013-12-16T13:33:43+01:00</lastmod>
     </url>
     <url>
         <loc>http://fabioberger.github.io/</loc>
-        <lastmod>2013-12-16T11:00:29+01:00</lastmod>
+        <lastmod>2013-12-16T13:33:43+01:00</lastmod>
     </url>
     <url>
         <loc>http://fabioberger.github.io/robots.txt</loc>
-        <lastmod>2013-12-16T11:00:29+01:00</lastmod>
+        <lastmod>2013-12-16T13:31:45+01:00</lastmod>
     </url>
 </urlset>

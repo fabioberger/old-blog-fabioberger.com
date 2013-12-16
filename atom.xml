@@ -1,16 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
+  <title><![CDATA[Fabio Berger]]></title>
   <link href="http://fabioberger.github.io/atom.xml" rel="self"/>
   <link href="http://fabioberger.github.io/"/>
-  <updated>2013-12-16T12:02:41+01:00</updated>
+  <updated>2013-12-16T13:33:43+01:00</updated>
   <id>http://fabioberger.github.io/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
+    <name><![CDATA[Fabio Berger]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[The Cube: Experiments in building a start-up community]]></title>
+    <link href="http://fabioberger.github.io/blog/2013/12/16/the-cube-an-experiment-in-building-an-entrepreneurial-community/"/>
+    <updated>2013-12-16T12:31:30+01:00</updated>
+    <id>http://fabioberger.github.io/blog/2013/12/16/the-cube-an-experiment-in-building-an-entrepreneurial-community</id>
+    <content type="html"><![CDATA[<h3>Duke University&rsquo;s Selective Living Group for Entrepreneurs</h3>
+
+<p>Back when I was a freshman at Duke, I took the leap of working on my first start-up. It was hard and I quickly realized I was swimming in the deep end. I decided to try and find other students who had started companies, so that I could learn as much from them without having to make all the mistakes myself. They were hard to find. Later that year, I stumbled upon a blog post by then Sophomore Sidney Primas where he wrote about his vision for an E-House on Duke&rsquo;s campus, dedicated to building an community of entrepreneurs. I decided to get in touch with Sidney and together with a couple of friends we started what is now The Cube on Duke&rsquo;s campus.As a second semester senior, the time is ripe to reflect on the 4 years invested in building The Cube into the thriving entrepreneurial community it is today.</p>
+
+<h4>Lesson 1: Recruitment is Everything</h4>
+
+<h4>Lesson 2: Know your mission</h4>
+
+<h4>Lesson 3: Personal relationships are paramount</h4>
+
+<h4>Lesson 4: &hellip;</h4>
+]]></content>
+  </entry>
   
 </feed>
