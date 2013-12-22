@@ -31,7 +31,7 @@ At The Cube we have been constantly defining our mission as an organization. Are
 
 Instead of replicating many of the startup resources available online or by Duke, The Cube has to focus on perhaps the most important resource for a founder: their support network. Startups are hard and it's when things are not working out or when you're feeling down that you need the most support. Having role models, others you can go to who have gone through what you are experiencing, offer useful advice and be there for you as a friend is priceless. This year I had the immense pleasure of living with Devin Solanki, founder of [PowerHouse Protein](http://powerhouseprotein.com/ "Powerhouse"). Not only have we become great friends, he has taught me an incredibe amount about manufacturing and selling physical products, while in return I helped introduce him to e-commerce and online ads as a way to boost his sales. It is these kinds of exchanges that exemplify The Cube's mission.
 
-{% img center /../images/pool_party.jpg 500 335 %}
+{% img center /../images/pool_party.png 500 335 %}
 
 ### Personal relationships are paramount
 

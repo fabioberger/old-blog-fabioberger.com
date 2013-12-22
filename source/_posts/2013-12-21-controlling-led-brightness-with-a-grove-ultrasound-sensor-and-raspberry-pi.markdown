@@ -10,7 +10,7 @@ I recently started hacking my Raspberry Pi, and as someone who feels most at hom
 
 I decided to build a simple project that would use a Grove Ultrasound sensor I had bought. I decided on controlling the brightness of an LED by moving my hand up and down above the ultrasound sensor. To do this, I started with the [Grove Ultrasound Sensor python code](https://github.com/yexiaobo-seeedstudio/Grove-RaspberryPi "Grove Ultrasound sensor github") off Github as well as a [software PWM (pulse width modulation) library](http://marks-space.com/2013/09/23/software-pwm-on-a-raspberry-pi/ "software PWM (pulse width modulation) library") for Raspberry Pi GPIO pins by Mark Williams. 
 
-{% img center /../images/raspberrypi_ultrasound_brightness.jpg 500 335 %}
+{% img center /../images/raspberrypi_ultrasound_brightness.png 500 335 %}
 
 
 ### Getting started
@@ -19,14 +19,14 @@ For this project you will need:
 
 - 1 Raspberry Pi
 - 1 LED
-- 1 100 Ohm resistor
+- 1 100 Ohm resistor 
 - 1 Grove Ultrasound Sensor
 - 5 Male-to-Female Jumper Wires
 - 1 Breadboard
 
 ### Step 1.
 
-Build a simple LED circuit on a breadboard with the 100 Ohm resistor. Once you have done this, hook up the ground and power of the breadboard to the ground pin and GPIO pin 7 of the Raspberry Pi respectivley. The pins below are labeled using the orientation of the Raspberry Pi in the image above. 
+Build a simple LED circuit on a breadboard with the 100 Ohm resistor. <!--more--> Once you have done this, hook up the ground and power of the breadboard to the ground pin and GPIO pin 7 of the Raspberry Pi respectivley. The pins below are labeled using the orientation of the Raspberry Pi in the image above. 
 
 {% img center /../images/raspberrypi_gpio_pins.png 500 335 %}
 
