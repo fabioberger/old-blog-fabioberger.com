@@ -4,7 +4,7 @@
   <title><![CDATA[Fabio Berger]]></title>
   <link href="http://fabioberger.github.io/atom.xml" rel="self"/>
   <link href="http://fabioberger.github.io/"/>
-  <updated>2013-12-16T16:43:39+01:00</updated>
+  <updated>2013-12-22T14:39:07+01:00</updated>
   <id>http://fabioberger.github.io/</id>
   <author>
     <name><![CDATA[Fabio Berger]]></name>
@@ -12,6 +12,99 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Controlling LED Brightness With a Grove Ultrasound Sensor and Raspberry Pi]]></title>
+    <link href="http://fabioberger.github.io/blog/2013/12/21/controlling-led-brightness-with-a-grove-ultrasound-sensor-and-raspberry-pi/"/>
+    <updated>2013-12-21T15:26:13+01:00</updated>
+    <id>http://fabioberger.github.io/blog/2013/12/21/controlling-led-brightness-with-a-grove-ultrasound-sensor-and-raspberry-pi</id>
+    <content type="html"><![CDATA[<p>I recently started hacking my Raspberry Pi, and as someone who feels most at home in software, I was delighted to find myself controlling hardware components over an SSH connection and having the entirety of the web at my disposal.</p>
+
+<p>I decided to build a simple project that would use a Grove Ultrasound sensor I had bought. I decided on controlling the brightness of an LED by moving my hand up and down above the ultrasound sensor. To do this, I started with the <a href="https://github.com/yexiaobo-seeedstudio/Grove-RaspberryPi" title="Grove Ultrasound sensor github">Grove Ultrasound Sensor python code</a> off Github as well as a <a href="http://marks-space.com/2013/09/23/software-pwm-on-a-raspberry-pi/" title="software PWM (pulse width modulation) library">software PWM (pulse width modulation) library</a> for Raspberry Pi GPIO pins by Mark Williams.</p>
+
+<p><img class="center" src="http://fabioberger.github.io/../images/raspberrypi_ultrasound_brightness.jpg" width="500" height="335"></p>
+
+<h3>Getting started</h3>
+
+<p>For this project you will need:</p>
+
+<ul>
+<li>1 Raspberry Pi</li>
+<li>1 LED</li>
+<li>1 100 Ohm resistor</li>
+<li>1 Grove Ultrasound Sensor</li>
+<li>5 Male-to-Female Jumper Wires</li>
+<li>1 Breadboard</li>
+</ul>
+
+
+<h3>Step 1.</h3>
+
+<p>Build a simple LED circuit on a breadboard with the 100 Ohm resistor. Once you have done this, hook up the ground and power of the breadboard to the ground pin and GPIO pin 7 of the Raspberry Pi respectivley. The pins below are labeled using the orientation of the Raspberry Pi in the image above.</p>
+
+<p><img class="center" src="http://fabioberger.github.io/../images/raspberrypi_gpio_pins.png" width="500" height="335"></p>
+
+<h3>Step 2.</h3>
+
+<p>Hook up the Grove Ultrasound sensor connectors with the following labels:</p>
+
+<ul>
+<li>VCC to the 5V pin on the Raspberry Pi</li>
+<li>GND to the ground line on the breadboard</li>
+<li>SIG to Raspberry Pi GPIO 11</li>
+<li>NC remains unconnected</li>
+</ul>
+
+
+<p> <img class="center" src="http://fabioberger.github.io/../images/grove_sensor.png" width="400"></p>
+
+<h3>Step 3.</h3>
+
+<p>Now we need to install Mark Williams PWM software on our Raspberry Pi.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>pi@raspberrypi ~ <span class="nv">$ </span>git clone https://github.com/mwilliams03/pi-blaster.git
+</span><span class='line'>pi@raspberrypi ~ <span class="nv">$ </span><span class="nb">cd </span>pi-blaster
+</span><span class='line'>pi@raspberrypi ~ <span class="nv">$ </span>make pi-blaster
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Once we&rsquo;ve done this, we need to enable PWM on GPIO pin 7 in order to control the LED brightness. We do this by specifying pin 7 as an argument in the following call:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>pi@raspberrypi ~ <span class="nv">$ </span>sudo ./pi-blaster/pi-blaster 7
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As Mark explains, this starts the pi blaster as a background job. If you ever want to stop it from running, you run the following:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>pi@raspberrypi ~ <span class="nv">$ </span>sudo killall pi-blaster
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Step 4</h3>
+
+<p>Now we need to grab the code I wrote based on the Grove Ultrasound Sensor python script. I&rsquo;ve modified the script to adjust the LED brightness based on the distance measured by the sensor. The closer ones hand is, the dimmer the LED becomes. In order to control the brightness of the LED, we need to write to /dev/pi-blaster specifying the pin and the brightness between 0 (off) and 1 (full brightness).</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>pi@raspberrypi ~ <span class="nv">$ </span>git clone git@github.com:fabioberger/raspberrypi-ultrasound-led-brightness.git
+</span><span class='line'>pi@raspberrypi ~ <span class="nv">$ </span><span class="nb">cd</span> ./raspberrypi-ultrasound-led-brightness
+</span><span class='line'>pi@raspberrypi ~ <span class="nv">$ </span>sudo python main.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Given that the pi-blaster was setup in the previous step, this should begin the measurements by the ultrasound sensor. Move your hand up and down above the sensor and watch the LED brightness adjust!</p>
+
+<p>I hope you enjoyed this walk through!</p>
+
+<p>Questions? Comments? Always happy to connect.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[The Cube: Experiments in building a startup community]]></title>
