@@ -4,7 +4,7 @@
   <title><![CDATA[Fabio Berger]]></title>
   <link href="http://fabioberger.github.io/atom.xml" rel="self"/>
   <link href="http://fabioberger.github.io/"/>
-  <updated>2014-09-28T14:12:05-04:00</updated>
+  <updated>2014-09-28T16:24:49-04:00</updated>
   <id>http://fabioberger.github.io/</id>
   <author>
     <name><![CDATA[Fabio Berger]]></name>
@@ -12,6 +12,47 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Building The InMoov Humanoid Robot]]></title>
+    <link href="http://fabioberger.github.io/blog/2014/09/28/building-the-inmoov-humanoid-robot/"/>
+    <updated>2014-09-28T14:16:39-04:00</updated>
+    <id>http://fabioberger.github.io/blog/2014/09/28/building-the-inmoov-humanoid-robot</id>
+    <content type="html"><![CDATA[<h2>Discovery</h2>
+
+<p>After discovering upon Gael&rsquo;s <a href="http://www.inmoov.fr/" title="InMoov Project">InMoov Project</a>, I decided to start building the InMoov Humanoid Robot. It&rsquo;s been an extremely great learning experience and by far the largest hardware project I have ever undertaken. There were so many lessons learned from this project and so I wanted to share them here with you. Below is a video of the arm Soroush, Alex, Doug and I were able to build within 2 months.</p>
+
+<p style="text-align:center;"> <iframe width="640" height="390" src="http://www.youtube.com/embed/6JMuzcy1dyk " frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe></p>
+
+<h2>Lesson 1: 3D printing is still craftsmanship</h2>
+
+<p>Despite being able to download the exact files of each individual part of the robotic arm, every persons printer has slightly different levels of precision when printing. <!--more--> Because of this, it still took quite a bit of filing and adjusting to get the parts to work together perfectly. Dealing with printer idiosyncrasies was another point of fine tuning and adjustment that turned what I thought would feel like assembling legos into more like handcrafting a violin.</p>
+
+<p> <span class='caption-wrapper left'><img class='caption' src='http://fabioberger.github.io/../images/alex-assembly.png' width='380' height='461' title='Alex Helping Out On Hand Assembly'><span class='caption-text'>Alex Helping Out On Hand Assembly</span></span></p>
+
+<p> <span class='caption-wrapper right'><img class='caption' src='http://fabioberger.github.io/../images/hand-pieces.jpg' width='380' height='461' title='Each piece of the hand needed filing'><span class='caption-text'>Each piece of the hand needed filing</span></span></p>
+
+<h2>Lesson 2: Each additional moving part is another potential point of failure</h2>
+
+<p>As the complexity of the arm grew and we were hooking up additional servos, gears and potentiometers, so did the number of potential points of failure. Unlike writing code, we couldn&rsquo;t assume a completed part of our project wouldn&rsquo;t change without us changing it, the physical world had other plans in mind. Multiple times, a piece would break, a potentiometer would stop working or a motor would get disconnected and what followed was a painful process of figuring what had gone wrong and who the culprit was.</p>
+
+<p> <span class='caption-wrapper left'><img class='caption' src='http://fabioberger.github.io/../images/forearm-open.jpg' width='380' height='507' title='Servo Cord System for Finger Articulation'><span class='caption-text'>Servo Cord System for Finger Articulation</span></span></p>
+
+<p> <span class='caption-wrapper right'><img class='caption' src='http://fabioberger.github.io/../images/soroush-programming-arm.jpg' width='380' height='507' title='Soroush debugging forearm servos'><span class='caption-text'>Soroush debugging forearm servos</span></span></p>
+
+<h2>Lesson 3: If they say use ABS, use ABS</h2>
+
+<p>Gael specified that the InMoov is best printed using ABS plastic. The reasons are that ABS is stronger and less brittle when compared with PLA. Since I was a proud owner of a Marketbot Replicator 2, ABS proved difficult to print. I decided to go ahead with PLA and experienced first hand how quickly small gears loose their teeth when under stress. Not only this but pieces cracking under the strain became a regular occurrence.</p>
+
+<p><span class='caption-wrapper center'><img class='caption' src='http://fabioberger.github.io/../images/gear.jpg' width='500' height='447' title='This bugger is tiny and got stripped 5 times'><span class='caption-text'>This bugger is tiny and got stripped 5 times</span></span></p>
+
+<h2>Lesson 4: Hardware is still expensive</h2>
+
+<p>When we started off on this endeavour, I thought I would be able to build this arm for around $200-300, once all the parts (and replacement parts) were bought, not to say anything of the tools we didn&rsquo;t know we needed, the cost of the arm was closer to $500. Because of this, you want to make it so that every piece you assemble can easily be re-used for another purpose. Supergluing servos to your 3D printed parts is probably not a great idea. Your prototype might only be version 1 and it would be great to re-use all those expensive components for version 2.</p>
+
+<p>I hope these lessons learned come in handy as you embark on a 3D printing, hardware project of your own! If you do end up building something, tell me about it!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Open Source Humanoid Robotics]]></title>
