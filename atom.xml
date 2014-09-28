@@ -4,7 +4,7 @@
   <title><![CDATA[Fabio Berger]]></title>
   <link href="http://fabioberger.github.io/atom.xml" rel="self"/>
   <link href="http://fabioberger.github.io/"/>
-  <updated>2013-12-22T14:55:50+01:00</updated>
+  <updated>2014-09-28T14:12:05-04:00</updated>
   <id>http://fabioberger.github.io/</id>
   <author>
     <name><![CDATA[Fabio Berger]]></name>
@@ -14,9 +14,56 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Open Source Humanoid Robotics]]></title>
+    <link href="http://fabioberger.github.io/blog/2013/12/27/Open-Source-Humanoid-Robotics/"/>
+    <updated>2013-12-27T07:59:12-05:00</updated>
+    <id>http://fabioberger.github.io/blog/2013/12/27/Open-Source-Humanoid-Robotics</id>
+    <content type="html"><![CDATA[<h2>Birth</h2>
+
+<p>Until this point in time, the development of humanoid robotics has taken place in the R&amp;D centers of large organizations. The reason for this has been the extraordinary cost of the hardware, software and collaboration tools at their disposal. Let&rsquo;s face it, a humanoid robot is an incredibly complex piece of engineering. Every joint, every muscle, not to mention the myriad of cognitive functions that are to be reproduced in a semi-intelligible robot are overwhelming. In order to tackle this challenge, I believe the only way to successfully do so is to tap into the ingenuity of the masses, to enable mass collaboration like that which has never before been possible.</p>
+
+<p><img class="center" src="http://fabioberger.github.io/../images/inmoov.png" width="500" height="335"></p>
+
+<p>We are about to enter into an era of unprecedented collaboration. The open source movement which began in the obscure corners of the internet, on IRC channels and email-lists is getting exponentially better at enabling people to find interesting projects, contribute with minimal additional effort and most importantly, is no longer limited to software.</p>
+
+<!--more-->
+
+
+<h4>The Enablers of Open Source</h4>
+
+<ul>
+<li>Github (Software)</li>
+<li>Circuits.io &amp; CircuitLab (Hardware &amp; Circuit Printing)</li>
+<li>Thingiverse &amp; Cubehero (Physical Design)</li>
+</ul>
+
+
+<p>As is noticable about this list, we have now covered all the broad bases needed for an open-source humanoid robotics project to take hold. With this new approach to building a humanoid robot, we can take unprecedented advantage of budding roboticists from around the globe to help contribute to a singular effort. Are you a 3D parts designer? Fantastic, we have limbs that need to be improved in order to increase range of motion and studiness. Are you a hardware hacker? Great! We need to choose a motor capable of holding the robots weight during biped locomotion. Are you a software guy? Awesome, you&rsquo;ll be right at home, building the layers of abstraction on top of the hardware to make this robot come to life.</p>
+
+<h2>An Analogy: The RepRap Project</h2>
+
+<p>The RepRap project was founded in 2005 with the mission of building an entirely open-source 3D Printer. Because of its open nature, the RepRap project soon began finding collaborators beyond its research lab at Bath University, and it&rsquo;s 3D printers received incremental improvements from collaborators across the globe.</p>
+
+<p><img class="center" src="http://fabioberger.github.io/../images/reprap.jpg" width="500" height="335"></p>
+
+<p>4 years after it&rsquo;s founding, a little known start-up called MakerBot incorporated with the goal of making a commercially available 3D printer. One of its founders, <a href="http://www.zachhoeken.com/about" title="Zach Smith">Zach Smith</a> was an early member and contributor of the RepRap project. Originally a web developer in New York, Smith got interested in 3D printing and decided to join NYC Resistor, a NY hacker space and began learning about hardware. Less then a year later, he was approached by Brett Pettis and began working on MakerBot, a company whose designs were completely open source at the time and based largely on the RepRap project. Makertbot is now one of the largest 3D printer manufacturers and was recently acquired by Stratys for $403 million in stock. Both the success of the RepRap project, an open-source hardware and software initiative as well as the commercial opportunities that can ensue from an open-source foundation have now been shown.</p>
+
+<h2>The Opportunity</h2>
+
+<p>With the surge of 3D printers in circulation, especially amongst makers and hackers, <a href="https://plus.google.com/109466702837468444192/posts" title="Gael Langevin">Gael Langevin</a> put his straight to work at building a robotic hand. Once he had completed that, he just kept going, designing the necessary scaffoldings and hardware more two arms, a head and a torso in what became the <a href="http://www.inmoov.fr/" title="InMoov Project">InMoov Project</a>. The project is completely open source and currently has 50 known reproductions of the Robot out in the world. Together with his collaborators, Gael is continuing to build this robot both in terms of its design, hardware and software with collaborators across the globe.</p>
+
+<p>Just like the early days of the RepRap project, InMoov is still building the first version of its humanoid robot. A commercial product based on it&rsquo;s work has not yet happened, let alone kits for self-assembly by enthusiasts. It is the very early days of a project that can eventually lead to a $3000-5000 dollar humanoid robot. As an open, hackable platform, its potential is endless. Once the physical body has been built, with its skeleton and motorized parts, a software operating system to control it will be needed. This piece of software, in order to be extremely powerful and flexible will need layers of abstraction above the hardware in order to enable the millions of purely software developers who currently build apps for smart phone and tablets, to shift their efforts towards the opportunities presented by a humanoid robotics platform. Instead of accessing GPS, a gyroscope and a camera, they will have access to an entire new array of hardware compenents. Hands, arms, legs, auditory and visual input that can inform programmable physical behavior. The opportunities will be staggering.</p>
+
+<p><img class="center" src="http://fabioberger.github.io/../images/ipad_control.png" width="500" height="335"></p>
+
+<p>I am very excited about the future of open source hardware and it&rsquo;s potential to turn our world on its head. If you are too, please reach out!</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Controlling LED Brightness With a Grove Ultrasound Sensor and Raspberry Pi]]></title>
     <link href="http://fabioberger.github.io/blog/2013/12/21/controlling-led-brightness-with-a-grove-ultrasound-sensor-and-raspberry-pi/"/>
-    <updated>2013-12-21T15:26:13+01:00</updated>
+    <updated>2013-12-21T09:26:13-05:00</updated>
     <id>http://fabioberger.github.io/blog/2013/12/21/controlling-led-brightness-with-a-grove-ultrasound-sensor-and-raspberry-pi</id>
     <content type="html"><![CDATA[<p>I recently started hacking my Raspberry Pi, and as someone who feels most at home in software, I was delighted to find myself controlling hardware components over an SSH connection and having the entirety of the web at my disposal.</p>
 
@@ -109,7 +156,7 @@
   <entry>
     <title type="html"><![CDATA[The Cube: Experiments in building a startup community]]></title>
     <link href="http://fabioberger.github.io/blog/2013/12/16/the-cube-an-experiment-in-building-an-entrepreneurial-community/"/>
-    <updated>2013-12-16T12:31:30+01:00</updated>
+    <updated>2013-12-16T06:31:30-05:00</updated>
     <id>http://fabioberger.github.io/blog/2013/12/16/the-cube-an-experiment-in-building-an-entrepreneurial-community</id>
     <content type="html"><![CDATA[<h3>Duke University&rsquo;s Selective Living Group for Entrepreneurs</h3>
 
