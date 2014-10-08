@@ -4,7 +4,7 @@
   <title><![CDATA[Fabio Berger]]></title>
   <link href="http://fabioberger.github.io/atom.xml" rel="self"/>
   <link href="http://fabioberger.github.io/"/>
-  <updated>2014-10-08T15:22:24-04:00</updated>
+  <updated>2014-10-08T15:27:42-04:00</updated>
   <id>http://fabioberger.github.io/</id>
   <author>
     <name><![CDATA[Fabio Berger]]></name>
@@ -18,9 +18,7 @@
     <link href="http://fabioberger.github.io/blog/2014/10/05/cryptocurrencies-turning-random-characters-into-financial-accounts/"/>
     <updated>2014-10-05T04:44:09-04:00</updated>
     <id>http://fabioberger.github.io/blog/2014/10/05/cryptocurrencies-turning-random-characters-into-financial-accounts</id>
-    <content type="html"><![CDATA[<h2>Cryptocurrencies: Turning Random Characters Into Financial Accounts</h2>
-
-<p>For the past month I have been spending lots of my time researching cryptocurrencies, most notably Bitcoin and Stellar. After having read multiple whitepapers, manually generating and executing bitcoin transactions on the blockchain and speaking with many of the thought leaders in the space including: <a href="http://www.coinbase.com/about">Fred Ehrsam</a>, <a href="https://www.stellar.org/about/">Joyce Kim</a> and <a href="http://gendal.wordpress.com/about/">Richard Gendal Brown</a>, I am more convinced then ever before that cryptocurrencies are here to stay and will revolutionize the way our world works. In this post, I want to share with you two of the fundamental realizations that have lead me to this conclusion and also some hurdles that are already slowing down the expansion of cryptocurrencies.</p>
+    <content type="html"><![CDATA[<p>For the past month I have been spending lots of my time researching cryptocurrencies, most notably Bitcoin and Stellar. After having read multiple whitepapers, manually generating and executing bitcoin transactions on the blockchain and speaking with many of the thought leaders in the space including: <a href="http://www.coinbase.com/about">Fred Ehrsam</a>, <a href="https://www.stellar.org/about/">Joyce Kim</a> and <a href="http://gendal.wordpress.com/about/">Richard Gendal Brown</a>, I am more convinced then ever before that cryptocurrencies are here to stay and will revolutionize the way our world works. In this post, I want to share with you two of the fundamental realizations that have lead me to this conclusion and also some hurdles that are already slowing down the expansion of cryptocurrencies.</p>
 
 <h2>Permissionless Financial Participation</h2>
 
