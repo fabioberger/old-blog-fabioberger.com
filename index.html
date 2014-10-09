@@ -9,7 +9,7 @@
   <meta name="author" content="Fabio Berger">
 
   
-  <meta name="description" content="For the past month I have been spending lots of my time researching cryptocurrencies, most notably Bitcoin and Stellar. After having read multiple &hellip;">
+  <meta name="description" content="I recently was dealing with a JSON object returned from an external API. I wanted to decode the JSON object into Golang structs so that I could then &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,52 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/10/09/how-to-unmarshal-a-json-array-of-arrays-in-go/">How to Unmarshal a JSON Array of Arrays in Go</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-09T17:15:10-04:00" pubdate data-updated="true">Oct 9<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I recently was dealing with a JSON object returned from an external API. I wanted to decode the JSON object into Golang structs so that I could then process and store its contents in my application. Go has a nifty <a href="http://golang.org/pkg/encoding/json/">JSON Package</a> that makes this process very easy by using the Unmarshal function that takes both the JSON and a pointer to a holder struct into which it is to be decoded.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">m</span><span class="p">)</span>  <span class="c1">// b must contain valid JSON that fits into m</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is very straightforward when dealing with JSON objects that contain objects or array of objects. But what if the API returns an array of arrays? In this case, you will need to unmarshal the JSON into a struct containing an array of arrays of either a specific type (i.e string) or an empty interface (i.e interface{}). As an example, if the API returns the following JSON: </div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/10/09/how-to-unmarshal-a-json-array-of-arrays-in-go/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -381,6 +427,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/10/09/how-to-unmarshal-a-json-array-of-arrays-in-go/">How to Unmarshal a JSON Array of Arrays in Go</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/10/05/cryptocurrencies-turning-random-characters-into-financial-accounts/">Cryptocurrencies: Turning Random Characters Into Financial Accounts</a>
       </li>
     
@@ -394,10 +444,6 @@
     
       <li class="post">
         <a href="/blog/2013/12/27/Open-Source-Humanoid-Robotics/">Open Source Humanoid Robotics</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/12/21/controlling-led-brightness-with-a-grove-ultrasound-sensor-and-raspberry-pi/">Controlling LED Brightness With a Grove Ultrasound Sensor and Raspberry Pi</a>
       </li>
     
   </ul>

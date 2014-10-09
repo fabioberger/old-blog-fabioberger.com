@@ -4,7 +4,7 @@
   <title><![CDATA[Fabio Berger]]></title>
   <link href="http://fabioberger.github.io/atom.xml" rel="self"/>
   <link href="http://fabioberger.github.io/"/>
-  <updated>2014-10-08T17:40:58-04:00</updated>
+  <updated>2014-10-09T17:27:05-04:00</updated>
   <id>http://fabioberger.github.io/</id>
   <author>
     <name><![CDATA[Fabio Berger]]></name>
@@ -12,6 +12,98 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[How to Unmarshal a JSON Array of Arrays in Go]]></title>
+    <link href="http://fabioberger.github.io/blog/2014/10/09/how-to-unmarshal-a-json-array-of-arrays-in-go/"/>
+    <updated>2014-10-09T17:15:10-04:00</updated>
+    <id>http://fabioberger.github.io/blog/2014/10/09/how-to-unmarshal-a-json-array-of-arrays-in-go</id>
+    <content type="html"><![CDATA[<p>I recently was dealing with a JSON object returned from an external API. I wanted to decode the JSON object into Golang structs so that I could then process and store its contents in my application. Go has a nifty <a href="http://golang.org/pkg/encoding/json/">JSON Package</a> that makes this process very easy by using the Unmarshal function that takes both the JSON and a pointer to a holder struct into which it is to be decoded.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">m</span><span class="p">)</span>  <span class="c1">// b must contain valid JSON that fits into m</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is very straightforward when dealing with JSON objects that contain objects or array of objects. But what if the API returns an array of arrays? In this case, you will need to unmarshal the JSON into a struct containing an array of arrays of either a specific type (i.e string) or an empty interface (i.e interface{}). As an example, if the API returns the following JSON: <!--more--></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="nt">&quot;men&quot;</span><span class="p">:</span> <span class="p">[</span>
+</span><span class='line'>      <span class="p">[</span> <span class="s2">&quot;1.80&quot;</span><span class="p">,</span> <span class="s2">&quot;82&quot;</span> <span class="p">],</span>
+</span><span class='line'>      <span class="p">[</span> <span class="s2">&quot;1.76&quot;</span><span class="p">,</span> <span class="s2">&quot;75&quot;</span><span class="p">]</span>
+</span><span class='line'>  <span class="p">]</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I now want to create a struct called subject out of the inner array values listed under men. To do this, I will define a holder struct with an array of arrays and then unmarshal the JSON into it:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">holder</span> <span class="o">:=</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">Men</span> <span class="p">[][]</span><span class="kt">string</span> <span class="s">`json:&quot;men&quot;`</span>
+</span><span class='line'><span class="p">}{}</span>
+</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">holder</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">err</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This struct has one property (Men), an array of arrays. In order to create the subject structs, we now need to loop over holder as follows:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">man</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">holder</span><span class="p">.</span><span class="nx">Men</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">height</span> <span class="o">:=</span> <span class="nx">man</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>      <span class="nx">weight</span> <span class="o">:=</span> <span class="nx">man</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>      <span class="nx">subject</span> <span class="o">:=</span> <span class="nx">Subject</span><span class="p">{</span>
+</span><span class='line'>          <span class="nx">Height</span><span class="p">:</span>    <span class="nx">height</span><span class="p">,</span>
+</span><span class='line'>          <span class="nx">Weight</span><span class="p">:</span>     <span class="nx">weight</span><span class="p">,</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="nx">subjects</span><span class="p">.</span><span class="nx">Men</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">subjects</span><span class="p">.</span><span class="nx">Men</span><span class="p">,</span> <span class="nx">subject</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In this way, we are able to turn a JSON array of arrays into structs in Go.</p>
+
+<p>If you are dealing with arrays of arrays that contain values with variable data types, you will need to use the following holder:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">holder</span> <span class="o">:=</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">Men</span> <span class="p">[][]</span><span class="kd">interface</span><span class="p">{}</span> <span class="s">`json:&quot;men&quot;`</span>
+</span><span class='line'><span class="p">}{}</span>
+</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">holder</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">err</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The interface{} (empty interface) serves as a general container and can therefore accept any data type. You will however have to assert the type expected for each value before using the values retrieved in holder. For a full tutorial on working with JSON in Go, I would recommend the <a href="http://blog.golang.org/json-and-go">JSON and Go post</a> on the Golang blog.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Cryptocurrencies: Turning Random Characters Into Financial Accounts]]></title>
@@ -65,7 +157,7 @@ bitcoin_address = utils.base58CheckEncode(0, ripemd160.digest())
 
 <p>If you do get through these hurdles, finding a bank willing to do business with you will be your next challenge. Bank have received a stern warning from FinCen that if they do accept cryptocurrency business, they will need to brace for stricter audits. This has made many banks unwilling to take on these types of businesses, and those who do (Silicon Valley Bank) are being very selective on their clientele, usually requiring a chief compliance officer on the team and backing from a premier VC firm. This list of barriers is creating a narrow bridge between the fiat and crypto worlds as only a handful of companies are successfully acting as intermediaries between the old financial system and the new.</p>
 
-<p>In order to secure the success of cryptocurrencies we must work on widening the bridge between fiat and crypto. We need to make it easier for people to move their funds into cryptocurrencies and make it easier for entrepreneurs to start companies that deal with their transmission without legal repercussions. Financial regulation has already stopped many entrepreneurs from starting businesses in this space and this deterrence will continue. As pointed out by <a href="http://joshwhiton.com/startups/the-next-silicon-valley/">Josh Whiton on his blog</a>, which ever country succeeds in passing and maintaining crypto-friendly regulation will unleash a tremendous amount of financial innovation.</p>
+<p>In order to secure the success of cryptocurrencies we must work on widening the bridge between fiat and crypto. We need to make it easier for people to move their funds into cryptocurrencies and make it easier for entrepreneurs to start companies that deal with their transmission without legal repercussions. Financial regulation has already stopped many entrepreneurs from starting businesses in this space and this deterrence will continue. As pointed out by Josh Whiton in his blog post: <a href="http://joshwhiton.com/startups/the-next-silicon-valley/">The Next Silicon Valley</a>, which ever country succeeds in passing and maintaining crypto-friendly regulation will unleash a tremendous amount of financial innovation.</p>
 ]]></content>
   </entry>
   
