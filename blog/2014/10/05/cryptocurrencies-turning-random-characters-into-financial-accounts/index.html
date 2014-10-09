@@ -113,24 +113,36 @@
 
 <p>To make this clearer, lets go ahead and generate a bitcoin address that can store, send and received bitcoins (special thanks to <a href="http://www.righto.com/2014/02/bitcoins-hard-way-using-raw-bitcoin.html">Key Shirriff&rsquo;s blog post on the raw bitcoin protocol</a>). The first step is to literally generate a 256-bit string of letters and numbers which will act as the bitcoin addresses private key (analogous to a password).</p>
 
-<pre><code># Warning: this random function is not cryptographically strong and is just for example
-private_key = ''.join(['%x' % random.randrange(16) for x in range(0, 64)])
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># Warning: this random function is not cryptographically strong and is just for example</span>
+</span><span class='line'><span class="n">private_key</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;</span><span class="si">%x</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">64</span><span class="p">)])</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>This will result in a private key that looks like this:</p>
 
-<pre><code>private_key = '3f42e34aebc34aff098c901a4ddf658afb29f80d1d158ed2b01fd982fe3aa230'
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">private_key</span> <span class="o">=</span> <span class="s">&#39;3f42e34aebc34aff098c901a4ddf658afb29f80d1d158ed2b01fd982fe3aa230&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>From this private key, we can now generate a public address we can send to whoever we would like to receive funds from. In order to do this, we will use the Elliptic Curve DSA algorithm followed by SHA-256 hashing, RIPEM-160 hashing, and then Base58 encoding with checksum to end up with the public bitcoin address:</p>
 
-<pre><code>signing_key = ecdsa.SigningKey.from_string(private_key.decode('hex'), curve=ecdsa.SECP256k1)
-public_key = ('\04' + signing_key.verifying_key.to_string()).encode('hex')
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">signing_key</span> <span class="o">=</span> <span class="n">ecdsa</span><span class="o">.</span><span class="n">SigningKey</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">private_key</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;hex&#39;</span><span class="p">),</span> <span class="n">curve</span><span class="o">=</span><span class="n">ecdsa</span><span class="o">.</span><span class="n">SECP256k1</span><span class="p">)</span>
+</span><span class='line'><span class="n">public_key</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="se">\04</span><span class="s">&#39;</span> <span class="o">+</span> <span class="n">signing_key</span><span class="o">.</span><span class="n">verifying_key</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;hex&#39;</span><span class="p">)</span>
+</span><span class='line'>  
+</span><span class='line'><span class="n">ripemd160</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&#39;ripemd160&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">ripemd160</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">public_key</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;hex&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span>
+</span><span class='line'><span class="n">bitcoin_address</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">base58CheckEncode</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ripemd160</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span>
+</span></code></pre></td></tr></table></div></figure>
 
-ripemd160 = hashlib.new('ripemd160')
-ripemd160.update(hashlib.sha256(public_key.decode('hex')).digest())
-bitcoin_address = utils.base58CheckEncode(0, ripemd160.digest())
-</code></pre>
 
 <p>With just a few lines of code that could run on even the simplest of computing devices we already have the equivalent of a bank account in this new financial system.</p>
 
