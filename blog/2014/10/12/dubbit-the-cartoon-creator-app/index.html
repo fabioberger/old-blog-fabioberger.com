@@ -111,7 +111,7 @@
 
 <h2>Video Uploads Are Slow</h2>
 
-<p>The biggest challenge to building Dubbit was having fast upload times for users who wanted to share their animated cartoons. At first we thought we could just record the phone screen and audio while they made the animation on app. For a 30 second cartoon, this resulted in a ~64MB MP4 file which even when compressed was still a lot  of data to upload during app use. We resorted to recording the character coordinate points for each frame of the animation (60 times a second) so we had a detailed record of the animation at every frame of a 60 fps (frames per second) video. This file was a couple of kilobytes large and could be compressed together with the audio recording of the animation and uploaded to our backend server where we used pygame and FFMpeg to convert it into an actual video file.</p>
+<p>The biggest challenge to building Dubbit was having fast upload times for users who wanted to share their animated cartoons. At first we thought we could just record the phone screen and audio while they made the animation on app. For a 30 second cartoon, this resulted in a ~64MB MP4 file which even when compressed was still a lot  of data to upload during app use. We resorted to recording the character coordinate points for each frame of the animation (30 times a second) so we had a detailed record of the animation at every frame of a 30 fps (frames per second) video. This file was a couple of kilobytes large and could be compressed together with the audio recording of the animation and uploaded to our backend server where we used pygame and FFMpeg to convert it into an actual video file.</p>
 
 <p>Converting a coordinates file into a video file meant recreating each frame of the video from the coordinates using Pygame, saving these frames as images and then combining all the images into a video file and overlaying the audio so that it matched up with the animation. This brought down the upload time to under 2 seconds! Success!</p>
 
@@ -131,7 +131,7 @@
 
 <h2>NSTimer Isn&rsquo;t Very Timely</h2>
 
-<p>While building the animations recorder class in our iOS app, we needed the coordinates of the characters to be recorded 60 times a second in order for us to then create a 30 fps video. In order to do this, we first tried using NSTimer to call the recordFrame method every 33.33 millisecond but quickly found that it was not in fact a real-time timer. NSTimer  In order to call recordFrame 60 times a second, we had to use CADisplayLink as follows:</p>
+<p>While building the animations recorder class in our iOS app, we needed the coordinates of the characters to be recorded 30 times a second in order for us to then create a 30 fps video. In order to do this, we first tried using NSTimer to call the recordFrame method every 33.33 millisecond but quickly found that it was not in fact a real-time timer. NSTimer  In order to call recordFrame 30 times a second, we had to use CADisplayLink as follows:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
