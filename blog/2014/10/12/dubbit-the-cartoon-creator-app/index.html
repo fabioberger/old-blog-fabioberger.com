@@ -113,17 +113,17 @@
 
 <p>The biggest challenge to building Dubbit was having fast upload times for users who wanted to share their animated cartoons. At first we thought we could just record the phone screen and audio while they made the animation on app. For a 30 second cartoon, this resulted in a ~64MB MP4 file which even when compressed was still a lot  of data to upload during app use. We resorted to recording the character coordinate points for each frame of the animation (60 times a second) so we had a detailed record of the animation at every frame of a 60 fps (frames per second) video. This file was a couple of kilobytes large and could be compressed together with the audio recording of the animation and uploaded to our backend server where we used pygame and FFMpeg to convert it into an actual video file.</p>
 
-<p><img class="center" src="/../images/dubbit_transcoding.png" width="1398" height="408"></p>
-
 <p>Converting a coordinates file into a video file meant recreating each frame of the video from the coordinates using Pygame, saving these frames as images and then combining all the images into a video file and overlaying the audio so that it matched up with the animation. This brought down the upload time to under 2 seconds! Success!</p>
 
-<p>We did however shift some of the waiting time to those who wanted to view the animation since transcoding and uploading it to Youtube takes a couple seconds. In addition to this, another cost of speeding up the upload process was building the animations rendering engine on the server side which was a good amount of work. It did however make the app very user-friendly and usable and was considered a necessary trade-off.</p>
+<p><img class="center" src="/../images/dubbit_transcoding.png" width="1398" height="408"></p>
+
+<p>We did however shift some of the waiting time to those who wanted to view the animation since transcoding and uploading it to Youtube took a couple seconds. In addition to this, another cost of speeding up the upload process was building the animations rendering engine on the server side which was a good amount of work. It did however make the app very user-friendly and usable and was considered a necessary trade-off.</p>
 
 <h2>Push vs. Pull Transcoding</h2>
 
-<p>When we first created the video transcoder on the server side, we had a cron running every 5 seconds, looking for any unprocessed animations to transcode. Although this system worked, it was a very inefficient use of our computing power, not to say anything of the potential lag time if your uploaded animation gets stored right after the cron runs. We quickly realized that a push system would work much better then polling the unprocessed queue at a regular interval. Enter <a href="http://zeromq.org/">ZeroMQ</a>.</p>
+<p>When we first created the video transcoder on the server side, we had a cron running every 5 seconds, looking for any unprocessed animations to transcode. Although this system worked, it was a very inefficient use of our computing power, not to say anything of the potential lag time if your animation just missed the cron run. We quickly realized that a push system would work much better then polling the unprocessed queue at a regular interval. Enter ZeroMQ.</p>
 
-<p>ZeroMQ is a concurrent networking library that makes it easy to connect sockets N-to-N with patterns such as fan-out, pub-sub, task distribution and request-reply. For Dubbit, we used their <a href="http://zguide.zeromq.org/page:all/#header-14">publisher-subscriber pattern</a> to allow our video transcoder to be notified as soon as a new animation was available for processing. When the video transcoder gets this notification, it hands the job to one of 5 worker threads waiting for work. If all workers are busy, the job gets queued until the next worker is free to take it on. In this way, we can transcode 5 animations simultaneously and never drop a notification but rather queue them until they can be processed.</p>
+<p><a href="http://zeromq.org/">ZeroMQ</a> is a concurrent networking library that makes it easy to connect sockets N-to-N with patterns such as fan-out, pub-sub, task distribution and request-reply. For Dubbit, we used their <a href="http://zguide.zeromq.org/page:all/#header-14">publisher-subscriber pattern</a> to allow our video transcoder to be notified as soon as a new animation was available for processing. When the video transcoder gets this notification, it hands the job to one of 5 worker threads waiting for work. If all workers are busy, the job gets queued until the next worker is free to take it on. In this way, we can transcode 5 animations simultaneously and never drop a notification but rather queue them until they can be processed.</p>
 
 <p><img class="center" src="/../images/zeromq.png" width="960" height="549"></p>
 
@@ -146,7 +146,7 @@
 
 <h2>User OnBoarding Is Non-trivial</h2>
 
-<p>When we first launched Dubbit, we would watch every animation someone created in order to learn about how users used the app. We quickly realized that many new users without us there to educate them on how to make a animation were clueless. Hundreds of silent cartoons without any voiceovers or talking characters made this painfully apparent. In order to fix this, we added a walk-through guide to the app, explaining to users how to make a Dubbit. Below is an animated gif of the responsive directions we gave users as they went through the necessary steps.</p>
+<p>When we first launched Dubbit, we would watch every animation someone created in order to learn about how users used the app. We quickly realized that many new users without us there to educate them on how to make an animation were clueless. Hundreds of silent cartoons without any voiceovers or talking characters made this painfully apparent. In order to fix this, we added a walk-through guide to the app, explaining to users how to make a Dubbit. Below is an animated gif of the responsive directions we gave users as they went through the necessary steps.</p>
 
 <p><img class="center" src="/../images/onboarding.gif" width="500" height="300"></p>
 
@@ -154,7 +154,7 @@
 
 <h2>The Average Person Isn&rsquo;t As Funny As South Park</h2>
 
-<p>One of the things we realized quite early on after launching Dubbit was that the average person really wasn&rsquo;t as funny as South Park. The saving grace of this realization however was that many things were only funny to those who knew the creators involved. It turns out a lot of humor stems from the personal relationship we have with the story teller and the specific inside jokes they reference in their animation. This limited amount of transferable comedic value made us think hard as to whether Dubbit should become more of a vine-type app where the best animations get voted into popularity or whether it should be a snapchat-like app between friends. It was incredible how with such a simple incarnation of the idea, we were already learning an incredible amount about which future direction would make the most sense for this product.</p>
+<p>One of the things we realized quite early on after launching Dubbit was that the average person really wasn&rsquo;t as funny as South Park. The saving grace of this realization however was that many things were only funny to those who knew the creators involved. It turns out a lot of humor stems from the personal relationship we have with the story teller and the specific inside jokes they reference in their animation. This limited amount of transferable comedic value made us think hard as to whether Dubbit should become more of a vine-type app where the best animations get voted into popularity or whether it should be a snapchat-like app between friends. With only such a simple incarnation of the idea, we were already learning an incredible amount about which future direction would make the most sense for this product.</p>
 
 <h2>Dubbit Cartoons Created The World Over</h2>
 
