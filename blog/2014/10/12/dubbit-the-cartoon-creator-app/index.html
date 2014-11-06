@@ -1,0 +1,368 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Dubbit: The Cartoon Creator App - Fabio Berger</title>
+  <meta name="author" content="Fabio Berger">
+
+  
+  <meta name="description" content="About a year ago I was watching South Park and realized how hilarious the show was despite the simplicity of the animations. I then started to think &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://fabioberger.github.io/blog/2014/10/12/dubbit-the-cartoon-creator-app">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Fabio Berger" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-46489056-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Fabio Berger</a></h1>
+  
+    <h2>Lessons learned and giving back</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:fabioberger.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Dubbit: The Cartoon Creator App</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-12T21:23:52-04:00" pubdate data-updated="true">Oct 12<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>About a year ago I was watching South Park and realized how hilarious the show was despite the simplicity of the animations. I then started to think about how many more funny stories could be told if anyone could make an animation, not just the handful of people at South Park Studios. I decided to find out and began building Dubbit, an animated cartoon creator app together with Soroush Pour. After we threw in a month or two of work, it was starting to come together and we launched a minimally viable product with a bare bones feature set to the Apple app store and the cartoons started pouring in from all around the world!</p>
+
+<p><img class="center" src="/../images/dubbit_screen1.png" width="550" height="268"></p>
+
+<p>It was again one of those awesome builder moments when you release what you have been working on for a while and see people using it for the first time. <!--more--> Each laughing person we heard in the background of a cartoon voice-over made us smile, we had created something silly but also very special. I wanted to share with you some of the technical challenges of building Dubbit, as well as some of the cartoons our users created.</p>
+
+<h2>Video Uploads Are Slow</h2>
+
+<p>The biggest challenge to building Dubbit was having fast upload times for users who wanted to share their animated cartoons. At first we thought we could just record the phone screen and audio while they made the animation on app. For a 30 second cartoon, this resulted in a ~64MB MP4 file which even when compressed was still a lot  of data to upload during app use. We resorted to recording the character coordinate points for each frame of the animation (60 times a second) so we had a detailed record of the animation at every frame of a 60 fps (frames per second) video. This file was a couple of kilobytes large and could be compressed together with the audio recording of the animation and uploaded to our backend server where we used pygame and FFMpeg to convert it into an actual video file.</p>
+
+<p><img class="center" src="/../images/dubbit_transcoding.png" width="1398" height="408"></p>
+
+<p>Converting a coordinates file into a video file meant recreating each frame of the video from the coordinates using Pygame, saving these frames as images and then combining all the images into a video file and overlaying the audio so that it matched up with the animation. This brought down the upload time to under 2 seconds! Success!</p>
+
+<p>We did however shift some of the waiting time to those who wanted to view the animation since transcoding and uploading it to Youtube takes a couple seconds. In addition to this, another cost of speeding up the upload process was building the animations rendering engine on the server side which was a good amount of work. It did however make the app very user-friendly and usable and was considered a necessary trade-off.</p>
+
+<h2>Push vs. Pull Transcoding</h2>
+
+<p>When we first created the video transcoder on the server side, we had a cron running every 5 seconds, looking for any unprocessed animations to transcode. Although this system worked, it was a very inefficient use of our computing power, not to say anything of the potential lag time if your uploaded animation gets stored right after the cron runs. We quickly realized that a push system would work much better then polling the unprocessed queue at a regular interval. Enter <a href="http://zeromq.org/">ZeroMQ</a>.</p>
+
+<p>ZeroMQ is a concurrent networking library that makes it easy to connect sockets N-to-N with patterns such as fan-out, pub-sub, task distribution and request-reply. For Dubbit, we used their <a href="http://zguide.zeromq.org/page:all/#header-14">publisher-subscriber pattern</a> to allow our video transcoder to be notified as soon as a new animation was available for processing. When the video transcoder gets this notification, it hands the job to one of 5 worker threads waiting for work. If all workers are busy, the job gets queued until the next worker is free to take it on. In this way, we can transcode 5 animations simultaneously and never drop a notification but rather queue them until they can be processed.</p>
+
+<p><img class="center" src="/../images/zeromq.png" width="960" height="549"></p>
+
+<p>With this kind of architecture, it would have been very easy to scale both vertically and horizontally. We could easily move the process to a large EC2 instance and increase the number of worker threads running on any given machine. We could also switch from the pub-sub pattern to a <a href="http://zguide.zeromq.org/page:all/#header-15">parallel pipeline pattern</a>, allowing us to have workers pull jobs on multiple instances from a single ventilator instance.</p>
+
+<h2>NSTimer Isn&rsquo;t Very Timely</h2>
+
+<p>While building the animations recorder class in our iOS app, we needed the coordinates of the characters to be recorded 60 times a second in order for us to then create a 60 fps video. In order to do this, we first tried using NSTimer to call the recordFrame method every 16.66 millisecond but quickly found that it was not in fact a real-time timer. In order to call recordFrame 60 times a second, we had to use CADisplayLink as follows:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">displayLink</span> <span class="o">=</span> <span class="p">[</span><span class="n">CADisplayLink</span> <span class="nl">displayLinkWithTarget:</span><span class="n">self</span> <span class="nl">selector:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">recordFrame:</span><span class="p">)];</span>
+</span><span class='line'><span class="n">displayLink</span><span class="p">.</span><span class="n">frameInterval</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+</span><span class='line'><span class="p">[</span><span class="n">displayLink</span> <span class="nl">addToRunLoop:</span><span class="p">[</span><span class="n">NSRunLoop</span> <span class="n">mainRunLoop</span><span class="p">]</span> <span class="nl">forMode:</span><span class="n">NSDefaultRunLoopMode</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>CADisplay was intended as a timer object that allows applications to synchronise their drawing to the refresh rate of the display. Because of this, it really was a real-time timer and by setting frameInterval to 2, it would call our method after every two frame refreshes, equivalent to 60 times a second.</p>
+
+<h2>User OnBoarding Is Non-trivial</h2>
+
+<p>When we first launched Dubbit, we would watch every animation someone created in order to learn about how users used the app. We quickly realized that many new users without us there to educate them on how to make a animation were clueless. Hundreds of silent cartoons without any voiceovers or talking characters made this painfully apparent. In order to fix this, we added a walk-through guide to the app, explaining to users how to make a Dubbit. Below is an animated gif of the responsive directions we gave users as they went through the necessary steps.</p>
+
+<p><img class="center" src="/../images/onboarding.gif" width="500" height="300"></p>
+
+<p>This simple addition increased dramatically the number of successful animations created. It was only a first step however and there were still many who weren&rsquo;t figuring out how to use Dubbit fast enough. There is still a lot of room for improvement in this aspect of the app.</p>
+
+<h2>The Average Person Isn&rsquo;t As Funny As South Park</h2>
+
+<p>One of the things we realized quite early on after launching Dubbit was that the average person really wasn&rsquo;t as funny as South Park. The saving grace of this realization however was that many things were only funny to those who knew the creators involved. It turns out a lot of humor stems from the personal relationship we have with the story teller and the specific inside jokes they reference in their animation. This limited amount of transferable comedic value made us think hard as to whether Dubbit should become more of a vine-type app where the best animations get voted into popularity or whether it should be a snapchat-like app between friends. It was incredible how with such a simple incarnation of the idea, we were already learning an incredible amount about which future direction would make the most sense for this product.</p>
+
+<h2>Dubbit Cartoons Created The World Over</h2>
+
+<p>Enjoy!</p>
+
+<iframe width="420" height="315" src="//www.youtube.com/embed/1b8jXPDj7f8?rel=0" frameborder="0" allowfullscreen></iframe>
+
+
+
+
+<iframe width="420" height="315" src="//www.youtube.com/embed/u8O9nz4w_cA?rel=0" frameborder="0" allowfullscreen></iframe>
+
+
+
+
+<iframe width="420" height="315" src="//www.youtube.com/embed/YcsL0VZnmtM?rel=0" frameborder="0" allowfullscreen></iframe>
+
+
+
+
+<iframe width="420" height="315" src="//www.youtube.com/embed/qvsrkmcJFm4?rel=0" frameborder="0" allowfullscreen></iframe>
+
+
+
+
+<iframe width="420" height="315" src="//www.youtube.com/embed/E452OVCECDQ?rel=0" frameborder="0" allowfullscreen></iframe>
+
+
+
+
+<iframe width="420" height="315" src="//www.youtube.com/embed/PjlwndM0zgI?rel=0" frameborder="0" allowfullscreen></iframe>
+
+
+
+
+<iframe width="420" height="315" src="//www.youtube.com/embed/1GpGvxrkW18?rel=0" frameborder="0" allowfullscreen></iframe>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Fabio Berger</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-12T21:23:52-04:00" pubdate data-updated="true">Oct 12<span>th</span>, 2014</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://fabioberger.github.io/blog/2014/10/12/dubbit-the-cartoon-creator-app/" data-via="fabioberger123" data-counturl="http://fabioberger.github.io/blog/2014/10/12/dubbit-the-cartoon-creator-app/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/10/09/how-to-unmarshal-a-json-array-of-arrays-in-go/" title="Previous Post: How to Unmarshal a JSON Array of Arrays in Go">&laquo; How to Unmarshal a JSON Array of Arrays in Go</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/12/dubbit-the-cartoon-creator-app/">Dubbit: The Cartoon Creator App</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/09/how-to-unmarshal-a-json-array-of-arrays-in-go/">How to Unmarshal a JSON Array of Arrays in Go</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/05/cryptocurrencies-turning-random-characters-into-financial-accounts/">Cryptocurrencies: Turning Random Characters Into Financial Accounts</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/09/29/startup-lessons-from-wealthlift-dot-com/">Startup Lessons From WealthLift.com</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/09/28/building-the-inmoov-humanoid-robot/">Building The InMoov Humanoid Robot</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/fabioberger">@fabioberger</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'fabioberger',
+            count: 23,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Fabio Berger -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'fabioberger';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://fabioberger.github.io/blog/2014/10/12/dubbit-the-cartoon-creator-app/';
+        var disqus_url = 'http://fabioberger.github.io/blog/2014/10/12/dubbit-the-cartoon-creator-app/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
