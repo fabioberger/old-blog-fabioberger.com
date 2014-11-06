@@ -131,7 +131,7 @@
 
 <h2>NSTimer Isn&rsquo;t Very Timely</h2>
 
-<p>While building the animations recorder class in our iOS app, we needed the coordinates of the characters to be recorded 60 times a second in order for us to then create a 60 fps video. In order to do this, we first tried using NSTimer to call the recordFrame method every 16.66 millisecond but quickly found that it was not in fact a real-time timer. In order to call recordFrame 60 times a second, we had to use CADisplayLink as follows:</p>
+<p>While building the animations recorder class in our iOS app, we needed the coordinates of the characters to be recorded 60 times a second in order for us to then create a 30 fps video. In order to do this, we first tried using NSTimer to call the recordFrame method every 33.33 millisecond but quickly found that it was not in fact a real-time timer. NSTimer  In order to call recordFrame 60 times a second, we had to use CADisplayLink as follows:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -142,7 +142,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>CADisplay was intended as a timer object that allows applications to synchronise their drawing to the refresh rate of the display. Because of this, it really was a real-time timer and by setting frameInterval to 2, it would call our method after every two frame refreshes, equivalent to 60 times a second.</p>
+<p>CADisplay was intended as a timer object that allows applications to synchronise their drawing to the refresh rate of the display. Because of this, it really was a real-time timer and by setting frameInterval to 2, it would call our method after every two frame refreshes, equivalent to 30 times a second.</p>
 
 <h2>User OnBoarding Is Non-trivial</h2>
 
