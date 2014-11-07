@@ -4,7 +4,7 @@
   <title><![CDATA[Fabio Berger]]></title>
   <link href="http://fabioberger.github.io/atom.xml" rel="self"/>
   <link href="http://fabioberger.github.io/"/>
-  <updated>2014-11-07T18:34:22-05:00</updated>
+  <updated>2014-11-07T18:53:25-05:00</updated>
   <id>http://fabioberger.github.io/</id>
   <author>
     <name><![CDATA[Fabio Berger]]></name>
@@ -126,7 +126,8 @@
 
 <p>For a full list of available methods, visit the <a href="https://godoc.org/github.com/fabioberger/coinbase-go">Coinbase-go GoDoc Page</a> and for examples on how to call them, look at the <a href="https://github.com/fabioberger/coinbase-go/blob/master/README.md#examples">README examples section</a>.</p>
 
-<h2>OAuth Application</h2>
+<h2 id="oauth">OAuth Authentication</h2>
+
 
 <p>It&rsquo;s great to be able to interact with our own Coinbase account via the API, especially for automating trades and keeping an eye on our account. What is even more powerful however is being able to build apps that any Coinbase account holder could use. To do this, we need to build an OAuth enabled application.</p>
 
