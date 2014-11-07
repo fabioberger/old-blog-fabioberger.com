@@ -228,15 +228,15 @@
 <p>Remember that you might need to replace .bash_profile with your shell config file name.</p>
 
 <p>We will assume you have also downloaded the Coinbase-go library but if not, refer to the
-&lsquo;Downloading the Library&rsquo; section under the &lsquo;API Key Application&rsquo; instructions. In order to build this example web app using the <a href="https://github.com/codegangsta/negroni">Negroni Framework</a>, we will need to download it as well:</p>
+&lsquo;Downloading the Library&rsquo; section under the &lsquo;API Key Application&rsquo; instructions. In order to build this example web app using the <a href="http://martini.codegangsta.io/">Martini Framework</a>, we will need to download it as well:</p>
 
-<p><code>go get github.com/codegangsta/negroni</code></p>
+<p><code>go get github.com/go-martini/martini</code></p>
 
-<p>Negroni is a minimalist Go web framework very similar to <a href="https://github.com/go-martini/martini">Martini</a> without dependency injection and other &lsquo;magic&rsquo;. We will use it to build a simple OAuth application which returns the balance of any Coinbase user who authenticates through the app.</p>
+<p>Martini is a powerful package for quickly writing modular web applications/services in Golang. We will use it to build a simple OAuth application which returns the balance of any Coinbase user who authenticates through our app.</p>
 
 <h3>Writing the App</h3>
 
-<p> Lets create a new project within our Go workspace called coinbase-oauth and create our main.go file:</p>
+<p>Lets create a new project within our Go workspace called coinbase-oauth and create our main.go file:</p>
 
 <p><code>mkdir $GOPATH/src/coinbase-oauth</code></p>
 
@@ -300,68 +300,112 @@
 <span class='line-number'>52</span>
 <span class='line-number'>53</span>
 <span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
 </pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kn">package</span> <span class="nx">main</span>
 </span><span class='line'>
 </span><span class='line'><span class="kn">import</span> <span class="p">(</span>
-</span><span class='line'>  <span class="s">&quot;fmt&quot;</span>
+</span><span class='line'>  <span class="s">&quot;log&quot;</span>
 </span><span class='line'>  <span class="s">&quot;net/http&quot;</span>
 </span><span class='line'>  <span class="s">&quot;os&quot;</span>
-</span><span class='line'>  <span class="s">&quot;github.com/codegangsta/negroni&quot;</span>
+</span><span class='line'>  <span class="s">&quot;strconv&quot;</span>
 </span><span class='line'>  <span class="s">&quot;github.com/fabioberger/coinbase-go&quot;</span>
+</span><span class='line'>  <span class="s">&quot;github.com/go-martini/martini&quot;</span>
 </span><span class='line'><span class="p">)</span>
 </span><span class='line'>
 </span><span class='line'><span class="kd">var</span> <span class="nx">o</span> <span class="o">*</span><span class="nx">coinbase</span><span class="p">.</span><span class="nx">OAuth</span>
 </span><span class='line'>
 </span><span class='line'><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">mux</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">NewServeMux</span><span class="p">()</span>
-</span><span class='line'>  <span class="nx">o</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">coinbase</span><span class="p">.</span><span class="nx">OAuthService</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;COINBASE_CLIENT_ID&quot;</span><span class="p">),</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;COINBASE_CLIENT_SECRET&quot;</span><span class="p">),</span>
-</span><span class='line'>   <span class="s">&quot;https://localhost:3000/tokens&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">m</span> <span class="o">:=</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">New</span><span class="p">()</span>
+</span><span class='line'>  <span class="nx">m</span><span class="p">.</span><span class="nx">Use</span><span class="p">(</span><span class="nx">martini</span><span class="p">.</span><span class="nx">Logger</span><span class="p">())</span>
+</span><span class='line'>  <span class="nx">m</span><span class="p">.</span><span class="nx">Use</span><span class="p">(</span><span class="nx">martini</span><span class="p">.</span><span class="nx">Recovery</span><span class="p">())</span>
+</span><span class='line'>  <span class="nx">m</span><span class="p">.</span><span class="nx">Use</span><span class="p">(</span><span class="nx">martini</span><span class="p">.</span><span class="nx">Static</span><span class="p">(</span><span class="s">&quot;public&quot;</span><span class="p">))</span>
+</span><span class='line'>  <span class="nx">r</span> <span class="o">:=</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">NewRouter</span><span class="p">()</span>
+</span><span class='line'>  <span class="nx">m</span><span class="p">.</span><span class="nx">MapTo</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="p">(</span><span class="o">*</span><span class="nx">martini</span><span class="p">.</span><span class="nx">Routes</span><span class="p">)(</span><span class="kc">nil</span><span class="p">))</span>
+</span><span class='line'>  <span class="nx">m</span><span class="p">.</span><span class="nx">Action</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">Handle</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Instantiate OAuthService with the OAuth App Client Id &amp; Secret from the Environment Variables</span>
+</span><span class='line'>  <span class="nx">o</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">coinbase</span><span class="p">.</span><span class="nx">OAuthService</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;COINBASE_CLIENT_ID&quot;</span><span class="p">),</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;COINBASE_CLIENT_SECRET&quot;</span><span class="p">),</span> <span class="s">&quot;https://localhost:8443/tokens&quot;</span><span class="p">)</span>
 </span><span class='line'>  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 </span><span class='line'>      <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 </span><span class='line'>      <span class="k">return</span>
 </span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  
-</span><span class='line'>  <span class="c1">// Handler for localhost:3000/</span>
-</span><span class='line'>  <span class="nx">mux</span><span class="p">.</span><span class="nx">HandleFunc</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// At http://localhosts:8443/ we will display an &quot;authorize&quot; link</span>
+</span><span class='line'>  <span class="nx">r</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
 </span><span class='line'>      <span class="nx">authorizeUrl</span> <span class="o">:=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">CreateAuthorizeUrl</span><span class="p">([]</span><span class="kt">string</span><span class="p">{</span>
 </span><span class='line'>          <span class="s">&quot;all&quot;</span><span class="p">,</span>
 </span><span class='line'>      <span class="p">})</span>
 </span><span class='line'>      <span class="nx">link</span> <span class="o">:=</span> <span class="s">&quot;&lt;a href=&#39;&quot;</span> <span class="o">+</span> <span class="nx">authorizeUrl</span> <span class="o">+</span> <span class="s">&quot;&#39;&gt;authorize&lt;/a&gt;&quot;</span>
-</span><span class='line'>      <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprintln</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">link</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">return</span> <span class="nx">link</span>
 </span><span class='line'>  <span class="p">})</span>
 </span><span class='line'>
-</span><span class='line'>  <span class="c1">// Handler for localhost:3000/tokens</span>
-</span><span class='line'>  <span class="nx">mux</span><span class="p">.</span><span class="nx">HandleFunc</span><span class="p">(</span><span class="s">&quot;/tokens&quot;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// AuthorizeUrl redirects to https://localhost:8443/tokens with &#39;code&#39; in its</span>
+</span><span class='line'>  <span class="c1">// query params. If you dont have SSL enabled, replace &#39;https&#39; with &#39;http&#39;</span>
+</span><span class='line'>  <span class="c1">// and reload the page. If successful, the user&#39;s balance will show</span>
+</span><span class='line'>  <span class="nx">r</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;/tokens&quot;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">res</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span><span class='line'>  
 </span><span class='line'>      <span class="c1">// Get the tokens given the &#39;code&#39; query param</span>
 </span><span class='line'>      <span class="nx">tokens</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">NewTokensFromRequest</span><span class="p">(</span><span class="nx">req</span><span class="p">)</span> <span class="c1">// Will use &#39;code&#39; query param from req</span>
 </span><span class='line'>      <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span><span class='line'>          <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprintln</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-</span><span class='line'>          <span class="k">return</span>
+</span><span class='line'>          <span class="k">return</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">()</span>
 </span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      
 </span><span class='line'>      <span class="c1">// instantiate the OAuthClient</span>
 </span><span class='line'>      <span class="nx">c</span> <span class="o">:=</span> <span class="nx">coinbase</span><span class="p">.</span><span class="nx">OAuthClient</span><span class="p">(</span><span class="nx">tokens</span><span class="p">)</span>
 </span><span class='line'>      
-</span><span class='line'>      <span class="c1">// request the users balance</span>
 </span><span class='line'>      <span class="nx">amount</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">GetBalance</span><span class="p">()</span>
 </span><span class='line'>      <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span><span class='line'>          <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprintln</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-</span><span class='line'>          <span class="k">return</span>
+</span><span class='line'>          <span class="k">return</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">()</span>
 </span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>      <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprintln</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">amount</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">return</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">FormatFloat</span><span class="p">(</span><span class="nx">amount</span><span class="p">,</span> <span class="sc">&#39;f&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
 </span><span class='line'>  <span class="p">})</span>
 </span><span class='line'>
-</span><span class='line'>  <span class="nx">n</span> <span class="o">:=</span> <span class="nx">negroni</span><span class="p">.</span><span class="nx">Classic</span><span class="p">()</span>
-</span><span class='line'>  <span class="nx">n</span><span class="p">.</span><span class="nx">UseHandler</span><span class="p">(</span><span class="nx">mux</span><span class="p">)</span>
-</span><span class='line'>  <span class="nx">n</span><span class="p">.</span><span class="nx">Run</span><span class="p">(</span><span class="s">&quot;:3000&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="c1">// HTTP</span>
+</span><span class='line'>  <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ListenAndServe</span><span class="p">(</span><span class="s">&quot;:8080&quot;</span><span class="p">,</span> <span class="nx">m</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class='line'>          <span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>  <span class="p">}()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// HTTPS</span>
+</span><span class='line'>  <span class="c1">// To generate a development cert and key, run the following from your *nix terminal:</span>
+</span><span class='line'>  <span class="c1">// go run $(go env GOROOT)/src/pkg/crypto/tls/generate_cert.go --host=&quot;localhost&quot;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ListenAndServeTLS</span><span class="p">(</span><span class="s">&quot;:8443&quot;</span><span class="p">,</span> <span class="s">&quot;cert.pem&quot;</span><span class="p">,</span> <span class="s">&quot;key.pem&quot;</span><span class="p">,</span> <span class="nx">m</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Lets walk step by step through the code. We start by importing Negroni, Coinbase-go and a couple Go packages. Go then runs the main function which begins by instantiating OAuthService with the OAuth app client Id and Secret we defined as environment variables as well as a redirect URI back to our app. We can then use this OAuthService &lsquo;o&rsquo; in the rest of our app.</p>
+<p>Before we can run the above code, Coinbase requires our redirect URL to communicate over SSL in order to protect their user&rsquo;s data. In order to run our server through HTTPS, we need to generate a development cert and key pair. Luckily, we can do this easily:</p>
 
-<p>Next, we define a Handle Function for requests sent to <a href="http://localhost:3000/.">http://localhost:3000/.</a> When someone requests this url, the app calls &lsquo;o.CreateAuthorizeUrl()&rsquo; to generate the authentication URL we would like to redirect users to in order for them to authorize our app&rsquo;s access to their coinbase account. We pass into this method the desired permissions to request from the user (in this case &ldquo;all&rdquo;). This method then returns a link to the authorization page on Coinbase.</p>
+<p><code>go run $(go env GOROOT)/src/pkg/crypto/tls/generate_cert.go --host="localhost"</code></p>
 
-<p>Once the user has clicked on this link, authorized our application on Coinbase, they will be sent back to the redirect URI we defined in OAuthService, in this case &ldquo;<a href="https://localhost:3000/tokens">https://localhost:3000/tokens</a>&rdquo;. This endpoint is the next HandleFunc defined in the code. It calls the &lsquo;o.NewTokensFromRequest()&rsquo; convenience method which will extract the &lsquo;code&rsquo; query parameter returned by Coinbase and request the tokens associated with it.</p>
+<p>This command will create a cert.pem and key.pem file in our directory. Since this is a self-signed certificate, your browser might complain that the certificate isn&rsquo;t trusted by a Certificate Authority. Since you are running this server however, you can safely ask your browser to ignore this and continue with loading the page. When deploying your app for the world to use, you will need to purchase an SSL certificate from a trusted Certificate Authority.</p>
+
+<p>Ok, lets walk step by step through the code we just wrote. We start by importing Martini, Coinbase-go and a couple more Go standard library packages. Go then runs the main function which begins by instantiating OAuthService with the OAuth app client Id and Secret we defined as environment variables as well as a redirect URI back to our app. We can then use this OAuthService &lsquo;o&rsquo; in the rest of our app.</p>
+
+<p>Next, we define a Handle Function for requests sent to <a href="http://localhost:8443/.">http://localhost:8443/.</a> When someone requests this url, the app calls &lsquo;o.CreateAuthorizeUrl()&rsquo; to generate the authentication URL we would like to redirect users to in order for them to authorize our app&rsquo;s access to their Coinbase account. We pass into this method the desired permissions to request from the user (<a href="https://www.coinbase.com/docs/api/permissions">see full permissions list</a>). This method then returns a link to the authorization page at Coinbase.</p>
+
+<p>Once the user has clicked on this link, authorized our application on Coinbase, they will be sent back to the redirect URI we defined in OAuthService, in this case &ldquo;<a href="https://localhost:8443/tokens">https://localhost:8443/tokens</a>&rdquo;. This endpoint is the next Handle Function defined in the code. It calls the &lsquo;o.NewTokensFromRequest()&rsquo; convenience method which will extract the &lsquo;code&rsquo; query parameter returned by Coinbase and request the tokens associated with it.</p>
 
 <p>Once we have these tokens, we can instantiate an OAuthClient with them. This client is similar to the ApiKeyClient above and has access to all the same convenience methods for sending requests to the Coinbase API. The only difference is that this time, each of those requests will be on behalf of the authenticated user. The next step in the code is for us to call &lsquo;GetBalance()&rsquo; and return its response to the user.</p>
 
