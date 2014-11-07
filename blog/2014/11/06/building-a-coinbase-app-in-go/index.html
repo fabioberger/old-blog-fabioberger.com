@@ -116,7 +116,7 @@
 
 <h3>Adding Key Pair to Environment Variables</h3>
 
-<p>In order to build an app using your own API key &amp; secret pair, we first need to create a key pair at <a href="https://coinbase.com/settings/api">Coinbase&rsquo;s API Settings page</a>. Make sure to enable the key pair by copying the verification code Coinbase will send you via email.</p>
+<p>In order to build an app using your own API key &amp; secret pair, we first need to create a key pair on <a href="https://coinbase.com/settings/api">Coinbase&rsquo;s API Settings page</a>. Make sure to enable the key pair by copying the verification code sent from Coinbase via email.</p>
 
 <p>Once this is done, let&rsquo;s set the key and secret as environment variables in your shell&rsquo;s config file by running the following in your terminal:</p>
 
@@ -126,24 +126,23 @@
 
 <p>Note that you might need to replace .bash_profile with .bashrc or whatever shell config file you use (more on this <a href="http://www.tldp.org/LDP/Bash-Beginners-Guide/html/sect_03_01.html">here</a>).</p>
 
-<p>Once this is done, we need to reload your shell configs as follows:</p>
+<p>Once this is done, we need to reload our shell configs as follows:</p>
 
-<p><code>source ~/.bash_profile # .bashrc, etc.</code></p>
+<p><code>source ~/.bash_profile #  or .bashrc, etc.</code></p>
 
 <p>In order to check that this worked properly, try running the following:</p>
 
-<p><code>echo $COINBASE_KEY</code>
-<code>echo $COINBASE_SECRET</code></p>
+<p><code>echo $COINBASE_KEY</code></p>
 
-<p>If these printed out your coinbase key and secret respectively, you are good to go! The reason we set the key and secret as environment variables is because it is considered good security practice not to include API keys in our projects source code. If someone gets access to your API Key, they could gain control over your Coinbase account.</p>
+<p>If these printed out your coinbase key you are good to go! The reason we set the key and secret as environment variables is because it is considered good security practice not to include API keys in our project source code. If someone gets access to our API Key, they could gain control over our Coinbase account.</p>
 
 <h3>Downloading the Library</h3>
 
-<p>We assume here that you have already installed Golang on your machine. Make sure you also have your $GOPATH set. If not, run the following after adding the path to your Go workspace:</p>
+<p>We assume here that you have already installed <a href="http://golang.org/">Golang</a> on your machine. Make sure you also have your $GOPATH set. If not, run the following after editing the path to your actual Go workspace path:</p>
 
 <p><code>echo "export GOPATH='path/to/your/go/folder'" &gt;&gt; ~/.bash_profile</code></p>
 
-<p>We are now ready to download the library with the following command:</p>
+<p>We are now ready to download the Coinbase-go library with the following command:</p>
 
 <p><code>go get github.com/fabioberger/coinbase-go</code></p>
 
@@ -151,7 +150,7 @@
 
 <h3>Writing the App</h3>
 
-<p>For this demo, we are going to write a simple command line application which will output our current Coinbase balance in terminal. Lets create a new project within our Go workspace called coinbase-app and create our main.go file:</p>
+<p>For this demo, we are going to write a simple command line application which will output our current Coinbase balance in our terminal. Lets create a new project within our Go workspace called coinbase-app and create our main.go file:</p>
 
 <p><code>mkdir $GOPATH/src/coinbase-app</code></p>
 
@@ -206,15 +205,15 @@
 
 <p>This simple program imports the Coinbase-go library, along with the &lsquo;fmt&rsquo;, &lsquo;log&rsquo; and &lsquo;os&rsquo; Go packages. Within main, we instantiate an APIKeyClient using the API key pair we set as environment variables. Once we have done this, we can use this client &lsquo;c&rsquo; to call convenience methods for sending requests to most of Coinbases API endpoints. For this example, we call the &lsquo;GetBalance()&rsquo; method in order to request our current balance from Coinbase.</p>
 
-<p>In order to run this example, run the following from within the project folder:</p>
+<p>To test out this example, run the following:</p>
 
 <p><code>go run main.go</code></p>
 
-<p>For a full list of available methods, visit the <a href="https://godoc.org/github.com/fabioberger/coinbase-go">Coinbase-go GoDoc Page</a> and for examples, look at the <a href="https://github.com/fabioberger/coinbase-go/blob/master/README.md#examples">README examples section</a>.</p>
+<p>For a full list of available methods, visit the <a href="https://godoc.org/github.com/fabioberger/coinbase-go">Coinbase-go GoDoc Page</a> and for examples on how to call them, look at the <a href="https://github.com/fabioberger/coinbase-go/blob/master/README.md#examples">README examples section</a>.</p>
 
 <h2>OAuth Application</h2>
 
-<p>It&rsquo;s great to be able to interact with our own Coinbase account via the API, especially for automating trades and keeping an eye on one&rsquo;s account. What is even more powerful however is being able to build apps that any Coinbase account holder could use. To do this, we need to build an OAuth enabled application.</p>
+<p>It&rsquo;s great to be able to interact with our own Coinbase account via the API, especially for automating trades and keeping an eye on our account. What is even more powerful however is being able to build apps that any Coinbase account holder could use. To do this, we need to build an OAuth enabled application.</p>
 
 <h3>Setup</h3>
 
@@ -233,15 +232,15 @@
 
 <p><code>go get github.com/codegangsta/negroni</code></p>
 
-<p>Negroni is a minimalist Go web framework very similar to <a href="https://github.com/go-martini/martini">Martini</a> without dependency injection and other magic. We will use it to build a simple OAuth application which returns the balance of any Coinbase user who authenticates through our app.</p>
+<p>Negroni is a minimalist Go web framework very similar to <a href="https://github.com/go-martini/martini">Martini</a> without dependency injection and other &lsquo;magic&rsquo;. We will use it to build a simple OAuth application which returns the balance of any Coinbase user who authenticates through the app.</p>
 
 <h3>Writing the App</h3>
 
 <p> Lets create a new project within our Go workspace called coinbase-oauth and create our main.go file:</p>
 
-<p><code>mkdir $GOPATH/src/coinbase-app</code></p>
+<p><code>mkdir $GOPATH/src/coinbase-oauth</code></p>
 
-<p><code>cd $GOPATH/src/coinbase-app</code></p>
+<p><code>cd $GOPATH/src/coinbase-oauth</code></p>
 
 <p><code>touch main.go</code></p>
 
@@ -298,6 +297,9 @@
 <span class='line-number'>49</span>
 <span class='line-number'>50</span>
 <span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
 </pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kn">package</span> <span class="nx">main</span>
 </span><span class='line'>
 </span><span class='line'><span class="kn">import</span> <span class="p">(</span>
@@ -312,7 +314,8 @@
 </span><span class='line'>
 </span><span class='line'><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
 </span><span class='line'>  <span class="nx">mux</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">NewServeMux</span><span class="p">()</span>
-</span><span class='line'>  <span class="nx">o</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">coinbase</span><span class="p">.</span><span class="nx">OAuthService</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;COINBASE_CLIENT_ID&quot;</span><span class="p">),</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;COINBASE_CLIENT_SECRET&quot;</span><span class="p">),</span> <span class="s">&quot;https://localhost:3000/tokens&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">o</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">coinbase</span><span class="p">.</span><span class="nx">OAuthService</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;COINBASE_CLIENT_ID&quot;</span><span class="p">),</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;COINBASE_CLIENT_SECRET&quot;</span><span class="p">),</span>
+</span><span class='line'>   <span class="s">&quot;https://localhost:3000/tokens&quot;</span><span class="p">)</span>
 </span><span class='line'>  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 </span><span class='line'>      <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 </span><span class='line'>      <span class="k">return</span>
@@ -337,6 +340,8 @@
 </span><span class='line'>      <span class="p">}</span>
 </span><span class='line'>      <span class="c1">// instantiate the OAuthClient</span>
 </span><span class='line'>      <span class="nx">c</span> <span class="o">:=</span> <span class="nx">coinbase</span><span class="p">.</span><span class="nx">OAuthClient</span><span class="p">(</span><span class="nx">tokens</span><span class="p">)</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="c1">// request the users balance</span>
 </span><span class='line'>      <span class="nx">amount</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">GetBalance</span><span class="p">()</span>
 </span><span class='line'>      <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 </span><span class='line'>          <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprintln</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
@@ -352,15 +357,19 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Lets walk step by step through the code. We start by importing for Negroni, Coinbase-go and a couple Go packages. Go then runs the main function which begins with instantiating OAuthService with the OAuth app client Id and Secret we defined as environment variables as well as a redirect URI back to our app. We can then use this OAuthService &lsquo;o&rsquo; in the rest of our app.</p>
+<p>Lets walk step by step through the code. We start by importing Negroni, Coinbase-go and a couple Go packages. Go then runs the main function which begins by instantiating OAuthService with the OAuth app client Id and Secret we defined as environment variables as well as a redirect URI back to our app. We can then use this OAuthService &lsquo;o&rsquo; in the rest of our app.</p>
 
-<p>Next, we define a HandleFunc for requests sent to <a href="http://localhost:3000/.">http://localhost:3000/.</a> When someone requests this url, the app calls &lsquo;CreateAuthorizeUrl()&rsquo; to generate the authentication URL we would like to redirect users to in order for them to authorize our app&rsquo;s access to their coinbase account. We pass into this method the desired permissions to request from the user (in this case &ldquo;all&rdquo;). This method then returns a link to the authorization page on Coinbase.</p>
+<p>Next, we define a Handle Function for requests sent to <a href="http://localhost:3000/.">http://localhost:3000/.</a> When someone requests this url, the app calls &lsquo;o.CreateAuthorizeUrl()&rsquo; to generate the authentication URL we would like to redirect users to in order for them to authorize our app&rsquo;s access to their coinbase account. We pass into this method the desired permissions to request from the user (in this case &ldquo;all&rdquo;). This method then returns a link to the authorization page on Coinbase.</p>
 
-<p>Once the user has clicked on this link, authorized our application on Coinbase, they will be sent back to the redirect URI we defined in OAuthService, in this case &ldquo;<a href="https://localhost:3000/tokens">https://localhost:3000/tokens</a>&rdquo;. This endpoint is the next HandleFunc defined in the code. It calls the &lsquo;NewTokensFromRequest()&rsquo; convenience method which will extract the &lsquo;code&rsquo; query parameter returned by Coinbase and request the tokens associated with it.</p>
+<p>Once the user has clicked on this link, authorized our application on Coinbase, they will be sent back to the redirect URI we defined in OAuthService, in this case &ldquo;<a href="https://localhost:3000/tokens">https://localhost:3000/tokens</a>&rdquo;. This endpoint is the next HandleFunc defined in the code. It calls the &lsquo;o.NewTokensFromRequest()&rsquo; convenience method which will extract the &lsquo;code&rsquo; query parameter returned by Coinbase and request the tokens associated with it.</p>
 
-<p>Once we have these tokens, we can instantiate an OAuthClient with them. This client is similar to the ApiKeyClient above and has access to all the same convenience methods for sending requests to the Coinbase API. The only difference is that this time, each of those requests will be on behalf of the authenticated user. The next step in the code is for us to call &lsquo;GetBalance()&rsquo; and return it to the user.</p>
+<p>Once we have these tokens, we can instantiate an OAuthClient with them. This client is similar to the ApiKeyClient above and has access to all the same convenience methods for sending requests to the Coinbase API. The only difference is that this time, each of those requests will be on behalf of the authenticated user. The next step in the code is for us to call &lsquo;GetBalance()&rsquo; and return its response to the user.</p>
 
-<p>The tokens we received from Coinbase have an expiry date we can access through tokens.ExpireTime. When we are getting close to this time, we will need to call &lsquo;o.RefreshTokens(tokens)&rsquo; in order to renew their validity.</p>
+<p>The tokens we received from Coinbase have an expiry time we can access through tokens.ExpireTime. When we are getting close to this time, we will need to call &lsquo;o.RefreshTokens(tokens)&rsquo; in order to renew their validity.</p>
+
+<h2>Conclusion</h2>
+
+<p>I hope that this walk through on how to create a Coinbase app using the Golang API wrapper was helpful. Please be sure to take a look at the <a href="https://github.com/fabioberger/coinbase-go/blob/master/README.md#examples">README examples section</a> of the Github project for more examples on the kinds of requests that are available through the wrapper. If you have any questions or comments, don&rsquo;t hesitate to reach out!</p>
 </div>
 
 
