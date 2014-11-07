@@ -217,7 +217,7 @@
 
 <h3>Setup</h3>
 
-<p>To create an OAuth application, we first need to create an OAuth application at <a href="https://coinbase.com/oauth/applications">https://coinbase.com/oauth/applications</a>. You will need to specify a redirect URI which while developing will be &lsquo;<a href="https://localhost:8443/tokens">https://localhost:8443/tokens</a>&rsquo;. Coinbase will give you a Client Id and Secret for your OAuth App, let&rsquo;s add these to our shell configs and reload them:</p>
+<p>To create an OAuth application, we first need to create an OAuth application at <a href="https://coinbase.com/oauth/applications">https://coinbase.com/oauth/applications</a>. You will need to specify a redirect URI which while developing will be &lsquo;<a href="https://localhost:8443/tokens">https://localhost:8443/tokens</a>&rsquo;. Coinbase will give you a Client Id and Secret for your OAuth App, let&rsquo;s add these to our shell configs as environment variables and reload them:</p>
 
 <p><code>echo "export COINBASE_CLIENT_ID='YOUR_CLIENT_ID' " &gt;&gt; ~/.bash_profile</code></p>
 
@@ -232,7 +232,7 @@
 
 <p><code>go get github.com/go-martini/martini</code></p>
 
-<p>Martini is a powerful package for quickly writing modular web applications/services in Golang. We will use it to build a simple OAuth application which returns the balance of any Coinbase user who authenticates through our app.</p>
+<p>Martini is a powerful package for quickly writing modular web applications/services in Golang. We will use it to build a simple OAuth application that returns the balance of any Coinbase user who authenticates through our app.</p>
 
 <h3>Writing the App</h3>
 
@@ -413,7 +413,7 @@
 
 <h2>Conclusion</h2>
 
-<p>I hope that this walk through on how to create a Coinbase app using the Golang API wrapper was helpful. Please be sure to take a look at the <a href="https://github.com/fabioberger/coinbase-go/blob/master/README.md#examples">README examples section</a> of the Github project for more examples on the kinds of requests that are available through the wrapper. If you have any questions or comments, don&rsquo;t hesitate to reach out!</p>
+<p>I hope that this walk through on how to create a Coinbase app using the Golang API wrapper was helpful. Please be sure to take a look at the <a href="https://github.com/fabioberger/coinbase-go/blob/master/README.md#examples">README examples section</a> on the Github project for more examples on the kinds of requests that are available through the wrapper. If you have any questions or comments, don&rsquo;t hesitate to reach out!</p>
 </div>
 
 
