@@ -4,7 +4,7 @@
   <title><![CDATA[Fabio Berger]]></title>
   <link href="http://fabioberger.github.io/atom.xml" rel="self"/>
   <link href="http://fabioberger.github.io/"/>
-  <updated>2014-11-07T18:26:53-05:00</updated>
+  <updated>2014-11-07T18:28:55-05:00</updated>
   <id>http://fabioberger.github.io/</id>
   <author>
     <name><![CDATA[Fabio Berger]]></name>
@@ -132,7 +132,7 @@
 
 <h3>Setup</h3>
 
-<p>To create an OAuth application, we first need to create an OAuth application at <a href="https://coinbase.com/oauth/applications">https://coinbase.com/oauth/applications</a>. You will need to specify a redirect URI which while developing will be &lsquo;<a href="https://localhost:3000/tokens">https://localhost:3000/tokens</a>&rsquo;. Coinbase will give you a Client Id and Secret for your OAuth App, let&rsquo;s add these to our shell configs and reload them:</p>
+<p>To create an OAuth application, we first need to create an OAuth application at <a href="https://coinbase.com/oauth/applications">https://coinbase.com/oauth/applications</a>. You will need to specify a redirect URI which while developing will be &lsquo;<a href="https://localhost:8443/tokens">https://localhost:8443/tokens</a>&rsquo;. Coinbase will give you a Client Id and Secret for your OAuth App, let&rsquo;s add these to our shell configs and reload them:</p>
 
 <p><code>echo "export COINBASE_CLIENT_ID='YOUR_CLIENT_ID' " &gt;&gt; ~/.bash_profile</code></p>
 
