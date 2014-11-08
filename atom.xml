@@ -4,7 +4,7 @@
   <title><![CDATA[Fabio Berger]]></title>
   <link href="http://fabioberger.github.io/atom.xml" rel="self"/>
   <link href="http://fabioberger.github.io/"/>
-  <updated>2014-11-07T18:59:02-05:00</updated>
+  <updated>2014-11-07T19:10:11-05:00</updated>
   <id>http://fabioberger.github.io/</id>
   <author>
     <name><![CDATA[Fabio Berger]]></name>
@@ -44,7 +44,7 @@
 
 <p>Note that you might need to replace .bash_profile with .bashrc or whatever shell config file you use (more on this <a href="http://www.tldp.org/LDP/Bash-Beginners-Guide/html/sect_03_01.html">here</a>).</p>
 
-<p>Once this is done, we need to reload our shell configs as follows:</p>
+<p>Once this is done, we need to reload our shell configs:</p>
 
 <p><code>source ~/.bash_profile #  or .bashrc, etc.</code></p>
 
