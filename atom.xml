@@ -4,7 +4,7 @@
   <title><![CDATA[Fabio Berger]]></title>
   <link href="http://fabioberger.github.io/atom.xml" rel="self"/>
   <link href="http://fabioberger.github.io/"/>
-  <updated>2014-11-10T13:01:59-05:00</updated>
+  <updated>2014-11-10T13:03:40-05:00</updated>
   <id>http://fabioberger.github.io/</id>
   <author>
     <name><![CDATA[Fabio Berger]]></name>
@@ -36,7 +36,7 @@
 
 <p>First, we need to create a key pair on <a href="https://coinbase.com/settings/api">Coinbase&rsquo;s API Settings page</a>. Make sure to enable the key pair by copying over the verification code sent via email from Coinbase.</p>
 
-<p>Once this is done, let&rsquo;s set the key and secret as environment variables in your shell&rsquo;s config file by running the following in terminal:</p>
+<p>Once this is done, let&rsquo;s set the key and secret as environment variables in our shell&rsquo;s config file by running the following in terminal:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">echo</span> <span class="s2">&quot;export COINBASE_KEY=&#39;YOUR_KEY&#39; &quot;</span> &gt;&gt; ~/.bash_profile
