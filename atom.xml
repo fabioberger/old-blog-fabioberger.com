@@ -4,7 +4,7 @@
   <title><![CDATA[Fabio Berger]]></title>
   <link href="http://fabioberger.github.io/atom.xml" rel="self"/>
   <link href="http://fabioberger.github.io/"/>
-  <updated>2014-11-10T11:05:31-05:00</updated>
+  <updated>2014-11-10T11:52:17-05:00</updated>
   <id>http://fabioberger.github.io/</id>
   <author>
     <name><![CDATA[Fabio Berger]]></name>
@@ -388,7 +388,14 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>This command will create a cert.pem and key.pem file in our directory. Since this is a self-signed certificate, your browser might complain that the certificate isn&rsquo;t trusted by a Certificate Authority. Since you are running this server however, you can safely ask your browser to ignore this warning and continue rendering the page. When deploying your app for the world to use, you will need to purchase an SSL certificate from a trusted Certificate Authority.</p>
+<p>This command will create a cert.pem and key.pem file in our directory. Since this is a self-signed certificate, your browser might complain that the certificate isn&rsquo;t trusted by a Certificate Authority. Since you are running this server however, you can safely ask your browser to ignore this warning and continue rendering the page. When deploying your app for the world to use, you will need to purchase an SSL certificate from a trusted Certificate Authority. We can now run this example with the following command:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>go run main.go
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To see the example, visit <a href="https://localhost:8443/">https://localhost:8443/</a> in your browser.</p>
 
 <p>Ok, lets walk step by step through the code we just wrote. We start by importing Martini, Coinbase-go and a couple other Go standard library packages. Go then runs the main function which begins by instantiating OAuthService with the OAuth app client Id and Secret we defined as environment variables as well as a redirect URI back to our app. We can then use this OAuthService &lsquo;o&rsquo; in the rest of our app.</p>
 
