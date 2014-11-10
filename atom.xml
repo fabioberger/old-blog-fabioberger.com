@@ -4,7 +4,7 @@
   <title><![CDATA[Fabio Berger]]></title>
   <link href="http://fabioberger.github.io/atom.xml" rel="self"/>
   <link href="http://fabioberger.github.io/"/>
-  <updated>2014-11-10T11:53:43-05:00</updated>
+  <updated>2014-11-10T13:01:59-05:00</updated>
   <id>http://fabioberger.github.io/</id>
   <author>
     <name><![CDATA[Fabio Berger]]></name>
@@ -18,7 +18,7 @@
     <link href="http://fabioberger.github.io/blog/2014/11/06/building-a-coinbase-app-in-go/"/>
     <updated>2014-11-06T16:12:48-05:00</updated>
     <id>http://fabioberger.github.io/blog/2014/11/06/building-a-coinbase-app-in-go</id>
-    <content type="html"><![CDATA[<p>Coinbase is a terrific Bitcoin Hosted Wallet that continues to simplify the purchase and safe storage of Bitcoin. They have an extensive API that allows 3rd party developers to build apps ontop of their platform. I noticed they didn&rsquo;t have an API wrapper written in Go, so I decided to write one. In this post, I will show you how to write a simple app using both their API Key and OAuth methods of authentication.</p>
+    <content type="html"><![CDATA[<p>Coinbase is a terrific Bitcoin Hosted Wallet that continues to simplify the purchase and safe storage of Bitcoin. They have an extensive API that allows 3rd party developers to build apps on top of their platform. I noticed they didn&rsquo;t have an API wrapper written in Go, so I decided to write one. In this post, I will show you how to write a simple app using both their API Key and OAuth methods of authentication.</p>
 
 <p><img class="center" src="http://fabioberger.github.io/../images/coinbase.png" width="380" height="120"></p>
 
@@ -50,7 +50,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Note that you might need to replace .bash_profile with .bashrc or whatever shell config file you use (more on this <a href="http://www.tldp.org/LDP/Bash-Beginners-Guide/html/sect_03_01.html">here</a>).</p>
+<p>Note that we might need to replace .bash_profile with .bashrc or whatever shell config file is in use (more on this <a href="http://www.tldp.org/LDP/Bash-Beginners-Guide/html/sect_03_01.html">here</a>).</p>
 
 <p>Once this is done, we need to reload our shell configs:</p>
 
@@ -66,9 +66,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>If this printed out your coinbase key you are good to go! The reason we set the key and secret as environment variables is because it is considered good <a href="https://www.coinbase.com/docs/api/overview#security">security practice</a> not to include API keys in our project source code. If someone got access to your API key and secret, it would</p>
-
-<p>If someone gets access to our API Key, they could gain control over our Coinbase account.</p>
+<p>If this printed out your coinbase key we are good to go! The reason we set the key and secret as environment variables is because it is considered good <a href="https://www.coinbase.com/docs/api/overview#security">security practice</a> not to include API keys in our project source code. If someone got access to your API key and secret, they could gain control over your Coinbase account.</p>
 
 <h3>Downloading the Library</h3>
 
@@ -168,11 +166,11 @@
 <h2 id="oauth">OAuth Authentication</h2>
 
 
-<p>It&rsquo;s great to be able to interact with our own Coinbase account via the API, especially for automating trades and keeping an eye on our account. What is even more powerful however is being able to build apps that any Coinbase account holder could use. To do this, we need to build an OAuth enabled application.</p>
+<p>It&rsquo;s great to be able to interact with our own Coinbase account via the API, especially for automating trades and keeping an eye on our account. What is even more powerful however is being able to build apps that any Coinbase account holder can use. To do this, we need to build an OAuth enabled application.</p>
 
 <h3>Setup</h3>
 
-<p>First we need to create an OAuth application at <a href="https://coinbase.com/oauth/applications">https://coinbase.com/oauth/applications</a>. You will need to specify a redirect URI which while developing will be &lsquo;<a href="https://localhost:8443/tokens">https://localhost:8443/tokens</a>&rsquo;. Coinbase will give you a Client Id and Secret for your OAuth App, let&rsquo;s add these to our shell configs as environment variables and reload them:</p>
+<p>First we need to create an OAuth application at <a href="https://coinbase.com/oauth/applications">https://coinbase.com/oauth/applications</a>. We will need to specify a redirect URI (&lsquo;<a href="https://localhost:8443/tokens">https://localhost:8443/tokens</a>&rsquo; during development). Coinbase will give us a Client Id and Secret for your OAuth App, let&rsquo;s add these to our shell configs as environment variables and reload them:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">echo</span> <span class="s2">&quot;export COINBASE_CLIENT_ID=&#39;YOUR_CLIENT_ID&#39; &quot;</span> &gt;&gt; ~/.bash_profile
@@ -193,9 +191,9 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Remember that you might need to replace .bash_profile with your shell config file name.</p>
+<p>Remember that we might need to replace .bash_profile with our shell config file name.</p>
 
-<p>We will assume you have also downloaded the Coinbase-go library but if not, refer to the
+<p>We will assume we have also downloaded the Coinbase-go library but if not, refer to the
 &lsquo;Downloading the Library&rsquo; section under the &lsquo;API Key Application&rsquo; instructions. In order to build this example web app using the <a href="http://martini.codegangsta.io/">Martini Framework</a>, we will need to download it as well:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -381,14 +379,14 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Before we can run the above code, Coinbase requires our redirect URL to communicate over SSL in order to protect their user&rsquo;s data. In order to run our server through HTTPS, we need to generate a development cert and key pair. Luckily, we can do this easily:</p>
+<p>Before we can run the above code, Coinbase requires our redirect URI to communicate over SSL in order to protect their user&rsquo;s data. In order to run our server through HTTPS, we need to generate a development cert and key pair. Luckily, we can do this easily:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>go run <span class="k">$(</span>go env GOROOT<span class="k">)</span>/src/pkg/crypto/tls/generate_cert.go --host<span class="o">=</span><span class="s2">&quot;localhost&quot;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>This command will create a cert.pem and key.pem file in our directory. Since this is a self-signed certificate, your browser might complain that the certificate isn&rsquo;t trusted by a Certificate Authority. Since you are running this server however, you can safely ask your browser to ignore this warning and continue rendering the page. When deploying your app for the world to use, you will need to purchase an SSL certificate from a trusted Certificate Authority. We can now run this example with the following command:</p>
+<p>This command will create a cert.pem and key.pem file in our directory. Since this is a self-signed certificate, our browser might complain that the certificate isn&rsquo;t trusted by a Certificate Authority. Since we are running this server however, we can safely ask our browser to ignore this warning and continue rendering the page. When deploying our app for the world to use, we will need to purchase an SSL certificate from a trusted Certificate Authority. We can now run this example with the following command:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>go run main.go
