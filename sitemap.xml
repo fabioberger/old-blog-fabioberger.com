@@ -4,64 +4,70 @@
         <loc>
             http://fabioberger.github.io/blog/2013/12/16/the-cube-an-experiment-in-building-an-entrepreneurial-community/
         </loc>
-        <lastmod>2014-09-28T16:37:05-04:00</lastmod>
+        <lastmod>2014-09-28T22:37:05+02:00</lastmod>
     </url>
     <url>
         <loc>
             http://fabioberger.github.io/blog/2013/12/21/controlling-led-brightness-with-a-grove-ultrasound-sensor-and-raspberry-pi/
         </loc>
-        <lastmod>2014-09-28T16:37:05-04:00</lastmod>
+        <lastmod>2014-09-28T22:37:05+02:00</lastmod>
     </url>
     <url>
         <loc>http://fabioberger.github.io/blog/2013/12/27/Open-Source-Humanoid-Robotics/</loc>
-        <lastmod>2014-09-28T16:37:05-04:00</lastmod>
+        <lastmod>2014-09-28T22:37:05+02:00</lastmod>
     </url>
     <url>
         <loc>
             http://fabioberger.github.io/blog/2014/09/28/building-the-inmoov-humanoid-robot/
         </loc>
-        <lastmod>2014-09-28T16:37:05-04:00</lastmod>
+        <lastmod>2014-09-28T22:37:05+02:00</lastmod>
     </url>
     <url>
         <loc>
             http://fabioberger.github.io/blog/2014/09/29/startup-lessons-from-wealthlift-dot-com/
         </loc>
-        <lastmod>2014-09-29T01:48:54-04:00</lastmod>
+        <lastmod>2014-09-29T07:48:54+02:00</lastmod>
     </url>
     <url>
         <loc>
             http://fabioberger.github.io/blog/2014/10/05/cryptocurrencies-turning-random-characters-into-financial-accounts/
         </loc>
-        <lastmod>2014-10-09T17:29:19-04:00</lastmod>
+        <lastmod>2014-10-09T23:29:19+02:00</lastmod>
     </url>
     <url>
         <loc>
             http://fabioberger.github.io/blog/2014/10/09/how-to-unmarshal-a-json-array-of-arrays-in-go/
         </loc>
-        <lastmod>2014-10-09T17:26:14-04:00</lastmod>
+        <lastmod>2014-10-09T23:26:14+02:00</lastmod>
     </url>
     <url>
-        <loc>http://fabioberger.github.io/blog/2014/10/12/dubbit-the-cartoon-creator-app/</loc>
-        <lastmod>2014-11-06T14:33:59-05:00</lastmod>
+        <loc>http://fabioberger.github.io/blog/2014/10/13/dubbit-the-cartoon-creator-app/</loc>
+        <lastmod>2014-11-06T20:33:59+01:00</lastmod>
     </url>
     <url>
         <loc>http://fabioberger.github.io/blog/2014/11/06/building-a-coinbase-app-in-go/</loc>
-        <lastmod>2014-11-10T13:03:11-05:00</lastmod>
+        <lastmod>2014-11-10T19:03:11+01:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://fabioberger.github.io/blog/2014/12/19/how-to-dockerize-golang-webapp-with-postgres-db/
+        </loc>
+        <lastmod>2014-12-19T14:51:41+01:00</lastmod>
     </url>
     <url>
         <loc>http://fabioberger.github.io/about/</loc>
-        <lastmod>2014-09-28T16:37:05-04:00</lastmod>
+        <lastmod>2014-09-28T22:37:05+02:00</lastmod>
     </url>
     <url>
         <loc>http://fabioberger.github.io/blog/archives/</loc>
-        <lastmod>2014-11-10T13:03:11-05:00</lastmod>
+        <lastmod>2014-12-19T14:51:41+01:00</lastmod>
     </url>
     <url>
         <loc>http://fabioberger.github.io/</loc>
-        <lastmod>2014-11-10T13:03:11-05:00</lastmod>
+        <lastmod>2014-12-19T14:51:41+01:00</lastmod>
     </url>
     <url>
         <loc>http://fabioberger.github.io/robots.txt</loc>
-        <lastmod>2014-09-28T16:37:06-04:00</lastmod>
+        <lastmod>2014-09-28T22:37:06+02:00</lastmod>
     </url>
 </urlset>

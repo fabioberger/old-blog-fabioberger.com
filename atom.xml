@@ -4,7 +4,7 @@
   <title><![CDATA[Fabio Berger]]></title>
   <link href="http://fabioberger.github.io/atom.xml" rel="self"/>
   <link href="http://fabioberger.github.io/"/>
-  <updated>2014-11-10T13:03:40-05:00</updated>
+  <updated>2014-12-19T14:52:39+01:00</updated>
   <id>http://fabioberger.github.io/</id>
   <author>
     <name><![CDATA[Fabio Berger]]></name>
@@ -14,9 +14,141 @@
 
   
   <entry>
+    <title type="html"><![CDATA[How To Dockerize A Golang Webapp With Postgres DB]]></title>
+    <link href="http://fabioberger.github.io/blog/2014/12/19/how-to-dockerize-golang-webapp-with-postgres-db/"/>
+    <updated>2014-12-19T11:27:42+01:00</updated>
+    <id>http://fabioberger.github.io/blog/2014/12/19/how-to-dockerize-golang-webapp-with-postgres-db</id>
+    <content type="html"><![CDATA[<p>I&rsquo;ve been playing around with <a href="ttps://www.docker.com/">Docker</a> recently and have decided to use it in the deployment of a Golang Negroni + Postgres webapp I&rsquo;ve been working on. In order to ensure future scalability and to comply with best practices, this meant spinning up two docker containers, one for the app and another for the database and linking the two. Working with docker for the first time, there were quite a few gotchas involved so I wanted to share with you a comprehensive walkthrough.</p>
+
+<p><img class="center" src="http://fabioberger.github.io/../images/go-docker.png" width="250" height="180"></p>
+
+<!--more-->
+
+
+<p>You can find the demo app for this tutorial here: <a href="https://github.com/fabioberger/dockerize-tutorial">Github.com/Dockerize-Tutorial</a></p>
+
+<p>This guide assumes you already have Docker installed, if not, <a href="http://docs.docker.com/installation/">install it now.</a></p>
+
+<h2>Step 1: Setup Postgres Docker Container</h2>
+
+<p>First, lets pull down and run the <a href="https://registry.hub.docker.com/_/postgres/">Official Postgres docker image</a> from Docker Hub. We will give it the convenient name &lsquo;db&rsquo; and also set the default &lsquo;postgres&rsquo; user&rsquo;s password:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker run --name db -e POSTGRES_PASSWORD=YOUR_PASSWORD -d postgres</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <code>-d</code> flag tells docker to run this container as a daemon so it will be running quietly in the background. Next, lets create our app&rsquo;s dedicated postgres user and create the database. To do this, let&rsquo;s open the containers bash shell:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker exec -it db /bin/bash</span></code></pre></td></tr></table></div></figure>
+
+
+<p>From this bash shell lets launch psql:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>psql -U postgres</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Within the postgres interactive shell let&rsquo;s create the user and db:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>CREATE USER app;
+</span><span class='line'>CREATE DATABASE testapp;
+</span><span class='line'>GRANT ALL PRIVILEGES ON DATABASE testapp TO app;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can now exit psql (ctrl-d). Now that we&rsquo;ve set up the DB, we are going to edit a config file within this container so lets install a text editor (Vim! I choose you!).</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>apt-get update && apt-get install vim</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Let&rsquo;s use our new superpowers to edit the postgres &lsquo;pg_hba.conf&rsquo; configuration file which controls client authentication. We need to change this file to allow our custom postgres user we created above to access the DB running on this container from the app container we will be creating later. By default, only the &lsquo;postgres&rsquo; user has this power. To discover the whereabouts of this config file we can ask postgres:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>psql -U postgres</span></code></pre></td></tr></table></div></figure>
+
+
+<p>in the postgres interactive shell run:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>SHOW hba_file;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Copy the file path returned and exit the psql shell (ctrl-d). Now lets edit this file with vim:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>vi /var/lib/postgresql/data/pg_hba.conf</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Change the last line in the file to the following and save the changes (:wq):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>host all "app" 0.0.0.0/0 trust</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Since this configuration file is only run when postgres boots up, we will now stop and start the db container. Exit back to your host computer (ctrl-d) and run:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker stop db
+</span><span class='line'>docker start db</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The changes should have taken effect and our Postgres container is now ready!</p>
+
+<h2>Step 2: Dockerize The Golang App</h2>
+
+<p>In order to Dockerize our Go App, we must create a Dockerfile within the project folder.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>touch Dockerfile</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Within this file, we will add these three lines:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>FROM golang:onbuild
+</span><span class='line'>RUN go get bitbucket.org/liamstask/goose/cmd/goose
+</span><span class='line'>EXPOSE 4000</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The first line will run the  &lsquo;onbuild&rsquo; variant of the golang image that automatically copies the package source, fetches the application dependencies, builds the program, and configures it to run on startup. The second line will install &lsquo;goose&rsquo;, our migration tool within the app container while the last line will expose port 4000 (where our app will be running) of the container to the outside world. Once we have this, we can now build a docker image for our app. From within the project directory, run:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker build -t app .</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The result of this command is a docker image of our golang app called &lsquo;app&rsquo;. We can now run a docker container from this image:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker run -d -p 8080:4000 --name tutapp --link dbtest:postgres app</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Let&rsquo;s break this command down: <code>-d</code> tells docker to run this container as a daemon. <code>-p 8080:4000</code> tells docker to map the containers port 4000 (where our app lives) to our host computer&rsquo;s port 8080. We conveniently name the docker container &lsquo;tutapp&rsquo; for future fun and lastly, <code>--link dbtest:postgres</code> links our app container to the postgres container we created earlier called &lsquo;dbtest&rsquo;.</p>
+
+<p>The last step required is to run the DB migrations for our app, so lets run &lsquo;goose up&rsquo; inside the tutapp container:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker exec -it tutapp goose up</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To visit the app, go to <a href="http://localhost:8080">http://localhost:8080</a> and you should see the app running!</p>
+
+<p>(If your docker daemon is running on another machine (or in a virtual machine), you should replace localhost with the address of that machine. If you&rsquo;re using boot2docker on OS X or Windows you can find that address with the command &lsquo;boot2docker ip&rsquo;)</p>
+
+<p>You now have a Golang app running and successfully communicating with a Postgres DB on a separate Docker Container. If anything was unclear or if anything didn&rsquo;t work for you, please leave me a comment below so that I can improve this post for others!</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Building a Coinbase App in Go]]></title>
     <link href="http://fabioberger.github.io/blog/2014/11/06/building-a-coinbase-app-in-go/"/>
-    <updated>2014-11-06T16:12:48-05:00</updated>
+    <updated>2014-11-06T22:12:48+01:00</updated>
     <id>http://fabioberger.github.io/blog/2014/11/06/building-a-coinbase-app-in-go</id>
     <content type="html"><![CDATA[<p>Coinbase is a terrific Bitcoin Hosted Wallet that continues to simplify the purchase and safe storage of Bitcoin. They have an extensive API that allows 3rd party developers to build apps on top of their platform. I noticed they didn&rsquo;t have an API wrapper written in Go, so I decided to write one. In this post, I will show you how to write a simple app using both their API Key and OAuth methods of authentication.</p>
 
@@ -413,9 +545,9 @@
   
   <entry>
     <title type="html"><![CDATA[Dubbit: The Cartoon Creator App]]></title>
-    <link href="http://fabioberger.github.io/blog/2014/10/12/dubbit-the-cartoon-creator-app/"/>
-    <updated>2014-10-12T21:23:52-04:00</updated>
-    <id>http://fabioberger.github.io/blog/2014/10/12/dubbit-the-cartoon-creator-app</id>
+    <link href="http://fabioberger.github.io/blog/2014/10/13/dubbit-the-cartoon-creator-app/"/>
+    <updated>2014-10-13T03:23:52+02:00</updated>
+    <id>http://fabioberger.github.io/blog/2014/10/13/dubbit-the-cartoon-creator-app</id>
     <content type="html"><![CDATA[<p>About a year ago I was watching South Park and realized how hilarious the show was despite the simplicity of the animations. I then started to think about how many more funny stories could be told if anyone could make an animation, not just the handful of people at South Park Studios. I decided to find out and began building Dubbit, an animated cartoon creator app together with Soroush Pour. After we threw in a month or two of work, it was starting to come together and we launched a minimally viable product with a bare bones feature set to the Apple app store and the cartoons started pouring in from all around the world!</p>
 
 <p><img class="center" src="http://fabioberger.github.io/../images/dubbit_screen1.png" width="550" height="268"></p>
@@ -513,7 +645,7 @@
   <entry>
     <title type="html"><![CDATA[How to Unmarshal a JSON Array of Arrays in Go]]></title>
     <link href="http://fabioberger.github.io/blog/2014/10/09/how-to-unmarshal-a-json-array-of-arrays-in-go/"/>
-    <updated>2014-10-09T17:15:10-04:00</updated>
+    <updated>2014-10-09T23:15:10+02:00</updated>
     <id>http://fabioberger.github.io/blog/2014/10/09/how-to-unmarshal-a-json-array-of-arrays-in-go</id>
     <content type="html"><![CDATA[<p>I recently was dealing with a JSON object returned from an external API. I wanted to decode the JSON object into Golang structs so that I could then process and store its contents in my application. Go has a nifty <a href="http://golang.org/pkg/encoding/json/">JSON Package</a> that makes this process very easy by using the Unmarshal function that takes both the JSON and a pointer to a holder struct into which it is to be decoded.</p>
 
@@ -605,7 +737,7 @@
   <entry>
     <title type="html"><![CDATA[Cryptocurrencies: Turning Random Characters Into Financial Accounts]]></title>
     <link href="http://fabioberger.github.io/blog/2014/10/05/cryptocurrencies-turning-random-characters-into-financial-accounts/"/>
-    <updated>2014-10-05T04:44:09-04:00</updated>
+    <updated>2014-10-05T10:44:09+02:00</updated>
     <id>http://fabioberger.github.io/blog/2014/10/05/cryptocurrencies-turning-random-characters-into-financial-accounts</id>
     <content type="html"><![CDATA[<p>For the past month I have been spending lots of my time researching cryptocurrencies, most notably Bitcoin and Stellar. After having read multiple whitepapers, manually generating and executing bitcoin transactions on the blockchain and speaking with many of the thought leaders in the space including: <a href="http://www.coinbase.com/about">Fred Ehrsam</a>, <a href="https://www.stellar.org/about/">Joyce Kim</a> and <a href="http://gendal.wordpress.com/about/">Richard Gendal Brown</a>, I am more convinced then ever before that cryptocurrencies are here to stay and will revolutionize the way our world works. In this post, I want to share with you two of the fundamental realizations that have lead me to this conclusion and also some hurdles that are already slowing down the expansion of cryptocurrencies.</p>
 
@@ -673,7 +805,7 @@
   <entry>
     <title type="html"><![CDATA[Startup Lessons From WealthLift.com]]></title>
     <link href="http://fabioberger.github.io/blog/2014/09/29/startup-lessons-from-wealthlift-dot-com/"/>
-    <updated>2014-09-29T00:23:10-04:00</updated>
+    <updated>2014-09-29T06:23:10+02:00</updated>
     <id>http://fabioberger.github.io/blog/2014/09/29/startup-lessons-from-wealthlift-dot-com</id>
     <content type="html"><![CDATA[<p>In august 2012, Soroush and I returned to school after having worked on WealthLift.com full-time for a year. One of our mentors told us to write down all the lessons we had learned from working on WealthLift. I am very thankful that I took the time to do it, and this is what I wrote. It&rsquo;s not the most organised brain dump, but there are some real gems in here that have now become part of my DNA as a founder.</p>
 
@@ -822,7 +954,7 @@
   <entry>
     <title type="html"><![CDATA[Building The InMoov Humanoid Robot]]></title>
     <link href="http://fabioberger.github.io/blog/2014/09/28/building-the-inmoov-humanoid-robot/"/>
-    <updated>2014-09-28T14:16:39-04:00</updated>
+    <updated>2014-09-28T20:16:39+02:00</updated>
     <id>http://fabioberger.github.io/blog/2014/09/28/building-the-inmoov-humanoid-robot</id>
     <content type="html"><![CDATA[<h2>Discovery</h2>
 
@@ -863,7 +995,7 @@
   <entry>
     <title type="html"><![CDATA[Open Source Humanoid Robotics]]></title>
     <link href="http://fabioberger.github.io/blog/2013/12/27/Open-Source-Humanoid-Robotics/"/>
-    <updated>2013-12-27T07:59:12-05:00</updated>
+    <updated>2013-12-27T13:59:12+01:00</updated>
     <id>http://fabioberger.github.io/blog/2013/12/27/Open-Source-Humanoid-Robotics</id>
     <content type="html"><![CDATA[<h2>Birth</h2>
 
@@ -910,7 +1042,7 @@
   <entry>
     <title type="html"><![CDATA[Controlling LED Brightness With a Grove Ultrasound Sensor and Raspberry Pi]]></title>
     <link href="http://fabioberger.github.io/blog/2013/12/21/controlling-led-brightness-with-a-grove-ultrasound-sensor-and-raspberry-pi/"/>
-    <updated>2013-12-21T09:26:13-05:00</updated>
+    <updated>2013-12-21T15:26:13+01:00</updated>
     <id>http://fabioberger.github.io/blog/2013/12/21/controlling-led-brightness-with-a-grove-ultrasound-sensor-and-raspberry-pi</id>
     <content type="html"><![CDATA[<p>I recently started hacking my Raspberry Pi, and as someone who feels most at home in software, I was delighted to find myself controlling hardware components over an SSH connection and having the entirety of the web at my disposal.</p>
 
@@ -1003,7 +1135,7 @@
   <entry>
     <title type="html"><![CDATA[The Cube: Experiments in building a startup community]]></title>
     <link href="http://fabioberger.github.io/blog/2013/12/16/the-cube-an-experiment-in-building-an-entrepreneurial-community/"/>
-    <updated>2013-12-16T06:31:30-05:00</updated>
+    <updated>2013-12-16T12:31:30+01:00</updated>
     <id>http://fabioberger.github.io/blog/2013/12/16/the-cube-an-experiment-in-building-an-entrepreneurial-community</id>
     <content type="html"><![CDATA[<h3>Duke University&rsquo;s Selective Living Group for Entrepreneurs</h3>
 

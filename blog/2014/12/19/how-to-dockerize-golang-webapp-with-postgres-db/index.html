@@ -1,0 +1,401 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>How To Dockerize A Golang Webapp With Postgres DB - Fabio Berger</title>
+  <meta name="author" content="Fabio Berger">
+
+  
+  <meta name="description" content="I&rsquo;ve been playing around with Docker recently and have decided to use it in the deployment of a Golang Negroni + Postgres webapp I&rsquo;ve &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://fabioberger.github.io/blog/2014/12/19/how-to-dockerize-golang-webapp-with-postgres-db">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Fabio Berger" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-46489056-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Fabio Berger</a></h1>
+  
+    <h2>Lessons learned and giving back</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:fabioberger.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">How to Dockerize a Golang Webapp With Postgres DB</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-12-19T11:27:42+01:00" pubdate data-updated="true">Dec 19<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I&rsquo;ve been playing around with <a href="ttps://www.docker.com/">Docker</a> recently and have decided to use it in the deployment of a Golang Negroni + Postgres webapp I&rsquo;ve been working on. In order to ensure future scalability and to comply with best practices, this meant spinning up two docker containers, one for the app and another for the database and linking the two. Working with docker for the first time, there were quite a few gotchas involved so I wanted to share with you a comprehensive walkthrough.</p>
+
+<p><img class="center" src="/../images/go-docker.png" width="250" height="180"></p>
+
+<!--more-->
+
+
+<p>You can find the demo app for this tutorial here: <a href="https://github.com/fabioberger/dockerize-tutorial">Github.com/Dockerize-Tutorial</a></p>
+
+<p>This guide assumes you already have Docker installed, if not, <a href="http://docs.docker.com/installation/">install it now.</a></p>
+
+<h2>Step 1: Setup Postgres Docker Container</h2>
+
+<p>First, lets pull down and run the <a href="https://registry.hub.docker.com/_/postgres/">Official Postgres docker image</a> from Docker Hub. We will give it the convenient name &lsquo;db&rsquo; and also set the default &lsquo;postgres&rsquo; user&rsquo;s password:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker run --name db -e POSTGRES_PASSWORD=YOUR_PASSWORD -d postgres</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <code>-d</code> flag tells docker to run this container as a daemon so it will be running quietly in the background. Next, lets create our app&rsquo;s dedicated postgres user and create the database. To do this, let&rsquo;s open the containers bash shell:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker exec -it db /bin/bash</span></code></pre></td></tr></table></div></figure>
+
+
+<p>From this bash shell lets launch psql:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>psql -U postgres</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Within the postgres interactive shell let&rsquo;s create the user and db:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>CREATE USER app;
+</span><span class='line'>CREATE DATABASE testapp;
+</span><span class='line'>GRANT ALL PRIVILEGES ON DATABASE testapp TO app;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can now exit psql (ctrl-d). Now that we&rsquo;ve set up the DB, we are going to edit a config file within this container so lets install a text editor (Vim! I choose you!).</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>apt-get update && apt-get install vim</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Let&rsquo;s use our new superpowers to edit the postgres &lsquo;pg_hba.conf&rsquo; configuration file which controls client authentication. We need to change this file to allow our custom postgres user we created above to access the DB running on this container from the app container we will be creating later. By default, only the &lsquo;postgres&rsquo; user has this power. To discover the whereabouts of this config file we can ask postgres:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>psql -U postgres</span></code></pre></td></tr></table></div></figure>
+
+
+<p>in the postgres interactive shell run:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>SHOW hba_file;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Copy the file path returned and exit the psql shell (ctrl-d). Now lets edit this file with vim:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>vi /var/lib/postgresql/data/pg_hba.conf</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Change the last line in the file to the following and save the changes (:wq):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>host all "app" 0.0.0.0/0 trust</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Since this configuration file is only run when postgres boots up, we will now stop and start the db container. Exit back to your host computer (ctrl-d) and run:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker stop db
+</span><span class='line'>docker start db</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The changes should have taken effect and our Postgres container is now ready!</p>
+
+<h2>Step 2: Dockerize The Golang App</h2>
+
+<p>In order to Dockerize our Go App, we must create a Dockerfile within the project folder.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>touch Dockerfile</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Within this file, we will add these three lines:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>FROM golang:onbuild
+</span><span class='line'>RUN go get bitbucket.org/liamstask/goose/cmd/goose
+</span><span class='line'>EXPOSE 4000</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The first line will run the  &lsquo;onbuild&rsquo; variant of the golang image that automatically copies the package source, fetches the application dependencies, builds the program, and configures it to run on startup. The second line will install &lsquo;goose&rsquo;, our migration tool within the app container while the last line will expose port 4000 (where our app will be running) of the container to the outside world. Once we have this, we can now build a docker image for our app. From within the project directory, run:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker build -t app .</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The result of this command is a docker image of our golang app called &lsquo;app&rsquo;. We can now run a docker container from this image:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker run -d -p 8080:4000 --name tutapp --link dbtest:postgres app</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Let&rsquo;s break this command down: <code>-d</code> tells docker to run this container as a daemon. <code>-p 8080:4000</code> tells docker to map the containers port 4000 (where our app lives) to our host computer&rsquo;s port 8080. We conveniently name the docker container &lsquo;tutapp&rsquo; for future fun and lastly, <code>--link dbtest:postgres</code> links our app container to the postgres container we created earlier called &lsquo;dbtest&rsquo;.</p>
+
+<p>The last step required is to run the DB migrations for our app, so lets run &lsquo;goose up&rsquo; inside the tutapp container:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker exec -it tutapp goose up</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To visit the app, go to <a href="http://localhost:8080">http://localhost:8080</a> and you should see the app running!</p>
+
+<p>(If your docker daemon is running on another machine (or in a virtual machine), you should replace localhost with the address of that machine. If you&rsquo;re using boot2docker on OS X or Windows you can find that address with the command &lsquo;boot2docker ip&rsquo;)</p>
+
+<p>You now have a Golang app running and successfully communicating with a Postgres DB on a separate Docker Container. If anything was unclear or if anything didn&rsquo;t work for you, please leave me a comment below so that I can improve this post for others!</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Fabio Berger</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-12-19T11:27:42+01:00" pubdate data-updated="true">Dec 19<span>th</span>, 2014</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://fabioberger.github.io/blog/2014/12/19/how-to-dockerize-golang-webapp-with-postgres-db/" data-via="fabioberger123" data-counturl="http://fabioberger.github.io/blog/2014/12/19/how-to-dockerize-golang-webapp-with-postgres-db/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/11/06/building-a-coinbase-app-in-go/" title="Previous Post: Building a Coinbase App in Go">&laquo; Building a Coinbase App in Go</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/12/19/how-to-dockerize-golang-webapp-with-postgres-db/">How To Dockerize A Golang Webapp With Postgres DB</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/11/06/building-a-coinbase-app-in-go/">Building a Coinbase App in Go</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/13/dubbit-the-cartoon-creator-app/">Dubbit: The Cartoon Creator App</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/09/how-to-unmarshal-a-json-array-of-arrays-in-go/">How to Unmarshal a JSON Array of Arrays in Go</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/05/cryptocurrencies-turning-random-characters-into-financial-accounts/">Cryptocurrencies: Turning Random Characters Into Financial Accounts</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/fabioberger">@fabioberger</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'fabioberger',
+            count: 23,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Fabio Berger -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'fabioberger';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://fabioberger.github.io/blog/2014/12/19/how-to-dockerize-golang-webapp-with-postgres-db/';
+        var disqus_url = 'http://fabioberger.github.io/blog/2014/12/19/how-to-dockerize-golang-webapp-with-postgres-db/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
