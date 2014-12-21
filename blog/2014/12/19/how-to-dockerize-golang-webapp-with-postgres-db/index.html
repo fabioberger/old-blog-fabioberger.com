@@ -211,7 +211,7 @@
 <p>The result of this command is a docker image of our golang app called &lsquo;app&rsquo;. We can now run a docker container from this image:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>docker run -d -p 8080:3000 --name tutapp --link dbtest:postgres app</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker run -d -p 8080:4000 --name tutapp --link dbtest:postgres app</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Let&rsquo;s break this command down: <code>-d</code> tells docker to run this container as a daemon. <code>-p 8080:4000</code> tells docker to map the containers port 4000 (where our app lives) to our host computer&rsquo;s port 8080. We conveniently name the docker container &lsquo;tutapp&rsquo; for future fun and lastly, <code>--link dbtest:postgres</code> links our app container to the postgres container we created earlier called &lsquo;dbtest&rsquo;.</p>
